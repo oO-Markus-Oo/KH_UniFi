@@ -45,12 +45,19 @@ if (is_object($clientList))
 
 		// War nicht in Liste!
 		if ($clientName == "")
-				$clientName = $client->hostname;
-
+		{
+		    if (@$client->hostname != "")
+		    {
+			$clientName = $client->hostname;
+		    }
+		    else
+		    {
+		       $clientName = "unbekannt";
+		    }
+		}
 		$scriptResult .= "<td>".$clientName."</td>";
-
 		$scriptResult .= "<td style='text-align:center'>".$client->mac."</td>";
-		$scriptResult .= "<td style='text-align:center'>".$client->ip."</td>";
+		$scriptResult .= "<td style='text-align:center'>".$client->ip."</td>";  
 		
 		// Accesspoints übersetzen
 		$apName = "";

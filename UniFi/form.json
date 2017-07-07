@@ -32,6 +32,14 @@
 					"edit": {
 						"type": "ValidationTextBox"
 					}
+				}, {
+					"label": "PresentVarID",
+					"name": "varPresentVarID", 
+					"width": "10px",
+					"add": 0,
+					"edit": {
+						"type": "SelectVariable", "name": "varPresentVarID", "caption": "PresentVAR"
+					}
 				}
 			],
 			"values": [

@@ -23,13 +23,11 @@ $htmlBoxID = IPS_GetVariableIDByName("ClientHTMLBox",$parentID);
 $clientList = UniFi_GetClients($parentID);
 
 $scriptResult = "";
-		echo print_r($clientList);
 
 if (is_object($clientList))
 {
 	foreach($clientList->data as $client)
 	{
-		echo print_r($client);
 		
 		$scriptResult .= "<tr style='height:20px;font-size:12px;'>";
 		

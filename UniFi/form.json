@@ -35,7 +35,7 @@
 				}, {
 					"label": "PresentVarID",
 					"name": "varPresentVarID", 
-					"width": "10px",
+					"width": "100px",
 					"add": 0,
 					"edit": {
 						"type": "SelectVariable", "name": "varPresentVarID", "caption": "PresentVAR"

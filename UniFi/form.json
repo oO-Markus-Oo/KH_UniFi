@@ -6,7 +6,7 @@
 		{ "name": "UserPassword",     "type": "ValidationTextBox", "caption": "Password" },
 		{
 			"type": "List",
-			"name": "TreeData",
+			"name": "Clients",
 			"caption": "Clients",
 			"rowCount": 5,
 			"add": true,

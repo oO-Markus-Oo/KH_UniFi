@@ -19,7 +19,7 @@
 				{
 					"label": "Gerätename",
 					"name": "varDeviceName", 
-					"width": "150px",
+					"width": "120px",
 					"add": "Name",
 					"edit": {
 						"type": "ValidationTextBox"
@@ -27,7 +27,7 @@
 				}, {
 					"label": "MAC",
 					"name": "varDeviceMAC", 
-					"width": "150px",
+					"width": "100px",
 					"add": "00:00:00:00:00",
 					"edit": {
 						"type": "ValidationTextBox"
@@ -35,7 +35,7 @@
 				}, {
 					"label": "PresentVarID",
 					"name": "varPresentVarID", 
-					"width": "100px",
+					"width": "75px",
 					"add": 0,
 					"edit": {
 						"type": "SelectVariable", "name": "varPresentVarID", "caption": "PresentVAR"

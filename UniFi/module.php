@@ -29,7 +29,7 @@ class UniFi extends IPSModule
         $this->userName = $this->ReadPropertyString("UserName");
         $this->userPassword = $this->ReadPropertyString("UserPassword");
 
-		$this->RegisterVariableString("ClientHTMLBox", "ClientHTMLBox");
+		$this->RegisterVariableString("ClientHTMLBox", "ClientHTMLBox", "~HTMLBox");
 		
 		$updateClientsScript = file_get_contents(__DIR__ . "/createClientList.php");
 		$scriptID = $this->RegisterScript("updateClients", "updateClients", $updateClientsScript);

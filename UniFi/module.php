@@ -17,6 +17,7 @@ class UniFi extends IPSModule
         $this->RegisterPropertyString("IPAddress", "https://127.0.0.1:8443");
         $this->RegisterPropertyString("UserName", "admin");
         $this->RegisterPropertyString("UserPassword", "");
+	$this->RegisterPropertyString("Clients", "");
        
     }
     

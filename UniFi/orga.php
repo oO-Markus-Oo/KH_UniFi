@@ -4,7 +4,7 @@ function CreateCategory( $Name, $Ident = '', $ParentID = 0 )
 {
 	global $RootCategoryID;
 
-	echo "CreateCategory: ( $Name, $Ident, $ParentID ) \n";
+	//echo "CreateCategory: ( $Name, $Ident, $ParentID ) \n";
 
 	if ( '' != $Ident )
 	{
@@ -48,7 +48,7 @@ function SetVariable( $VarID, $Type, $Value )
 }
 function CreateVariable( $Name, $Type, $Value, $Ident = '', $ParentID = 0 )
 {
-	echo "CreateVariable: ( $Name, $Type, $Value, $Ident, $ParentID ) \n";
+	//echo "CreateVariable: ( $Name, $Type, $Value, $Ident, $ParentID ) \n";
 	if ( '' != $Ident )
 	{
 		$VarID = @IPS_GetObjectIDByIdent( $Ident, $ParentID );

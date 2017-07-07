@@ -19,16 +19,16 @@
 				{
 					"label": "Gerätename",
 					"name": "varDeviceName", 
-					"width": "100px",
-					"add": 0,
+					"width": "150px",
+					"add": "Name",
 					"edit": {
 						"type": "ValidationTextBox"
 					}
 				}, {
 					"label": "MAC",
 					"name": "varDeviceMAC", 
-					"width": "175px",
-					"add": 0,
+					"width": "150px",
+					"add": "00:00:00:00:00",
 					"edit": {
 						"type": "ValidationTextBox"
 					}

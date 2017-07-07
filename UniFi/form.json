@@ -7,8 +7,8 @@
 		{
 			"type": "List",
 			"name": "TreeData",
-			"caption": "Devices",
-			"rowCount": 5,
+			"caption": "Clients",
+			"rowCount": 2,
 			"add": true,
 			"delete": true,
 			"sort": {
@@ -17,31 +17,20 @@
 			},
 			"columns": [
 				{
-					"label": "InstanceID",
-					"name": "instanceID", 
+					"label": "varDeviceName",
+					"name": "Gerätename", 
 					"width": "75px",
 					"add": 0,
 					"edit": {
-						"type": "SelectInstance"
+						"type": "ValidationTextBox"
 					}
 				}, {
-					"label": "Name",
-					"name": "name",
-					"width": "auto",
-					"add": ""
-				}, {
-					"label": "State",
-					"name": "state",
-					"width": "40px",					
-					"add": "New!"
-				}, {
-					"label": "Temperature",
-					"name": "temperature",
-					"width": "75px",					
-					"add": 20.0,
+					"label": "varDeviceMAC",
+					"name": "MAC", 
+					"width": "175px",
+					"add": 0,
 					"edit": {
-						"type": "NumberSpinner",
-						"digits": 2
+						"type": "ValidationTextBox"
 					}
 				}
 			],

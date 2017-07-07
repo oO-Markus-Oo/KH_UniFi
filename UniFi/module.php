@@ -65,9 +65,6 @@ class UniFi extends IPSModule
 		$url = $this->baseURL."/api/login";
 		$json = "{'username':'".$this->userName."', 'password':'".$this->userPassword."'}";
 
-		IPS_LogMessage("Login",$url);
-		IPS_LogMessage("Login",$json);
-
 		curl_setopt($this->ch, CURLOPT_URL, $url);
 		curl_setopt($this->ch, CURLOPT_POST, 1);
 		curl_setopt($this->ch, CURLOPT_POSTFIELDS, $json);
@@ -92,16 +89,11 @@ class UniFi extends IPSModule
 		$this->Login();
 		
 		$url = $this->baseURL."/api/s/default/stat/sta";
-		
-		IPS_LogMessage("GetClients",print_r($this->ch,true));
-		IPS_LogMessage("GetClients",$url);
-		
+			
 		curl_setopt($this->ch, CURLOPT_URL, $url);
 		curl_setopt($this->ch, CURLOPT_POST, 1);
 		curl_setopt($this->ch, CURLOPT_POSTFIELDS, "json={}");
 		$response = curl_exec($this->ch);
-
-		IPS_LogMessage("GetClients",$response);
 		
 		$this->Logout();
 		

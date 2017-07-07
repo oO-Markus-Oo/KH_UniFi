@@ -8,7 +8,7 @@
 			"type": "List",
 			"name": "TreeData",
 			"caption": "Clients",
-			"rowCount": 2,
+			"rowCount": 5,
 			"add": true,
 			"delete": true,
 			"sort": {
@@ -17,16 +17,16 @@
 			},
 			"columns": [
 				{
-					"label": "varDeviceName",
-					"name": "Gerätename", 
-					"width": "75px",
+					"label": "Gerätename",
+					"name": "varDeviceName", 
+					"width": "100px",
 					"add": 0,
 					"edit": {
 						"type": "ValidationTextBox"
 					}
 				}, {
-					"label": "varDeviceMAC",
-					"name": "MAC", 
+					"label": "MAC",
+					"name": "varDeviceMAC", 
 					"width": "175px",
 					"add": 0,
 					"edit": {

@@ -1,31 +1,24 @@
 <?php
 
-function CreateCategory( $Name, $Ident = '', $ParentID = 0 )
+if (!function_exists('CreateCategoryByName'))
 {
-	global $RootCategoryID;
-
-	//echo "CreateCategory: ( $Name, $Ident, $ParentID ) \n";
-
-	if ( '' != $Ident )
-	{
-		$CatID = @IPS_GetObjectIDByIdent( $Ident, $ParentID );
-		if ( false !== $CatID )
-		{
-		   $Obj = IPS_GetObject( $CatID );
-		   if ( 0 == $Obj['ObjectType'] ) // is category?
-		      return $CatID;
-		}
-	}
-	$CatID = IPS_CreateCategory();
-	IPS_SetName( $CatID, $Name );
-   IPS_SetIdent( $CatID, $Ident );
-
-	if ( 0 == $ParentID )
-		if ( IPS_ObjectExists( $RootCategoryID ) )
-			$ParentID = $RootCategoryID;
-	IPS_SetParent( $CatID, $ParentID );
-
-	return $CatID;
+function CreateCategoryByName($name, $Ident='', $ParentID=0, $pos=0, $hidden=false)
+{
+  global $_IPS;
+  if ($Ident <> '') $CatID = @IPS_GetObjectIDByIdent ($Ident, $ParentID);
+  if ($Ident == '') $Catid = @IPS_GetCategoryIDByName ($name, $ParentID);
+  
+  if($Catid === false)
+  {
+    $Catid = IPS_CreateCategory();
+    IPS_SetParent($Catid, $ParentID);
+    IPS_SetName($Catid, $name);
+    IPS_SetPosition($Catid, $pos);
+    IPS_SetHidden($Catid, $hidden);
+    IPS_SetInfo($Catid, "This category was created by: #".$_IPS['SELF']."#");
+  }
+  return $Catid;
+}
 }
 
 function SetVariable( $VarID, $Type, $Value )

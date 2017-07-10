@@ -1,5 +1,4 @@
 <?
-
 class UniFi extends IPSModule {
 
     var $ch;
@@ -30,12 +29,12 @@ class UniFi extends IPSModule {
         $this->RegisterVariableString("ClientHTMLBox", "ClientHTMLBox", "~HTMLBox");
 
         $updateClientsScript = file_get_contents(__DIR__ . "/createClientList.php");
-        $scriptID = $this->RegisterScript("updateClients", "updateClients", $updateClientsScript);
-        IPS_SetScriptTimer($scriptID, 60);
+        $updateClientsScriptID = $this->RegisterScript("updateClients", "updateClients", $updateClientsScript);
+        IPS_SetScriptTimer($updateClientsScriptID, 60);
 
         $updateWLANScript = file_get_contents(__DIR__ . "/createWLANList.php");
-        $scriptID = $this->RegisterScript("updateWLAN", "updateWLAN", $updateWLANScript);
-        IPS_SetScriptTimer($scriptID, 60);
+        $updateWLANScriptID = $this->RegisterScript("updateWLAN", "updateWLAN", $updateWLANScript);
+        IPS_SetScriptTimer($updateWLANScriptID, 60);
 
         $setWLANScript = file_get_contents(__DIR__ . "/setWLAN.php");
         $this->RegisterScript("setWLAN", "setWLAN", $setWLANScript);
@@ -90,10 +89,11 @@ class UniFi extends IPSModule {
 
         $this->Logout();
 
-        if ($response !== false)
+        if ($response !== false) {
             return json_decode($response);
-        else
+        } else {
             return 0;
+        }
     }
 
     public function GetWLANConfig() {
@@ -107,10 +107,11 @@ class UniFi extends IPSModule {
 
         $this->Logout();
 
-        if ($response !== false)
+        if ($response !== false) {
             return json_decode($response);
-        else
+        } else {
             return 0;
+        }
     }
 
     public function SetWLANConfig($groupID, $config) {

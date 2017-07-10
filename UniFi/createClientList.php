@@ -32,15 +32,16 @@ if (is_object($clientList)) {
         // Name über MACNummer rausfinden.
         // Nicht alle Geräte senden anständig ihren Namen mit. Deswegen über Liste arbeiten
         $clientName = "";
-        foreach ($macList as $key => $entry)
+        foreach ($macList as $key => $entry) {
             if ($entry["MAC"] == $client->mac) {
                 $clientName = $entry["Name"];
                 break;
             }
+        }
 
         // War nicht in Liste!
         if ($clientName == "") {
-            if (@$client->hostname != "") {
+            if ($client->hostname != "") {
                 $clientName = $client->hostname;
             } else {
                 $clientName = "unbekannt";
@@ -53,15 +54,17 @@ if (is_object($clientList)) {
         // Accesspoints übersetzen
         $apName = "";
 
-        foreach ($apList as $ap)
+        foreach ($apList as $ap) {
             if ($ap["MAC"] == $client->ap_mac) {
                 $apName = $ap["Name"];
                 break;
             }
+        }
 
         // War nicht in Liste!
-        if ($apName == "")
+        if ($apName == "") {
             $apName = $client->ap_mac;
+        }
 
 
         $ident = str_replace(":", "", $client->mac);
@@ -84,25 +87,27 @@ if (is_object($clientList)) {
 
         // Pegelumwandlung - Entspricht leider nicht dem Wert in der Webconsole. Kein Plan wie die das berechnen
         /* 100% -35 / 50% -65 / 1% -95 */
-        if ($client->signal <= -95)
+        if ($client->signal <= -95) {
             $percent = 1;
-        else if ($client->signal >= -35)
+        } else if ($client->signal >= -35) {
             $percent = 100;
-        else
+        } else {
             $percent = round(($client->signal + 95) / 0.6);
+        }
 
-        if ($percent < 10)
+        if ($percent < 10) {
             $levelImg = "0";
-        else if ($percent <= 20)
+        } else if ($percent <= 20) {
             $levelImg = "1";
-        else if ($percent <= 40)
+        } else if ($percent <= 40) {
             $levelImg = "2";
-        else if ($percent <= 60)
+        } else if ($percent <= 60) {
             $levelImg = "3";
-        else if ($percent <= 80)
+        } else if ($percent <= 80) {
             $levelImg = "4";
-        else
+        } else {
             $levelImg = "5";
+        }
 
         $scriptResult .= "<img src='user/img/level/level$levelImg.png'> $percent% (Ch." . $client->channel . ") " . $client->radio_proto;
         $scriptResult .= "</div></tr>";
@@ -123,16 +128,18 @@ if (is_object($clientList)) {
         // Nicht alle Geräte senden anständig ihren Namen mit. Deswegen über Liste arbeiten
         $found = false;
         foreach ($macList as $key => $entry) {
-            if ($entry["MAC"] == $client->mac)
+            if ($entry["MAC"] == $client->mac) {
                 $macList[$key]["Present"] = true;
+            }
         }
     }
 }
 
 foreach ($macList as $key => $entry) {
     // Nur einen Wert setzen, wenn auch ein Target vorhanden ist
-    if (isset($entry["PresentVarID"]))
+    if (isset($entry["PresentVarID"])) {
         SetValue($entry["PresentVarID"], $entry["Present"]);
+    }
 }
 
 // ------------------------------------------------
@@ -143,9 +150,9 @@ $htmlBox .= "<table style='width:100%;font-size:14px;'>";
 $htmlBox .= "<tr><td style='text-align:left;font-size:12px;' colspan='10'>Letzte Aktualisierung: " . date("H:i:s d.m.Y") . "</td></tr>";
 $htmlBox .= "<tr style='height:1px;'><td style='background-color:#aaaaaa;' colspan='10'></td></tr>";
 
-if ($scriptResult == "")
+if ($scriptResult == "") {
     $htmlBox .= "<tr><td style=''>Keine Clients im WLAN</td></tr>";
-else {
+} else {
     $htmlBox .= "<tr><th>Name</th><th>MAC</th><th>IP</th><th>AP</th><th>WLAN</th><th>Pegel</th></tr>";
     $htmlBox .= $scriptResult;
 }

@@ -44,13 +44,13 @@ function SetVariable($VarID, $Type, $Value) {
 function CreateVariable($Name, $Type, $Value, $Ident = '', $ParentID = 0) {
     //echo "CreateVariable: ( $Name, $Type, $Value, $Ident, $ParentID ) \n";
     if ('' != $Ident) {
-        $VarID = @IPS_GetObjectIDByIdent($Ident, $ParentID);
+        $VarID = IPS_GetObjectIDByIdent($Ident, $ParentID);
         if (false !== $VarID) {
             SetVariable($VarID, $Type, $Value);
             return;
         }
     }
-    $VarID = @IPS_GetObjectIDByName($Name, $ParentID);
+    $VarID = IPS_GetObjectIDByName($Name, $ParentID);
     if (false !== $VarID) { // exists?
         $Obj = IPS_GetObject($VarID);
         if (2 == $Obj['ObjectType']) { // is variable?
@@ -64,8 +64,9 @@ function CreateVariable($Name, $Type, $Value, $Ident = '', $ParentID = 0) {
     $VarID = IPS_CreateVariable($Type);
     IPS_SetParent($VarID, $ParentID);
     IPS_SetName($VarID, $Name);
-    if ('' != $Ident)
+    if ('' != $Ident) {
         IPS_SetIdent($VarID, $Ident);
+    }
     SetVariable($VarID, $Type, $Value);
 }
 

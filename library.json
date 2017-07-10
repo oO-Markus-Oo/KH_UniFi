@@ -1,9 +1,13 @@
 {
-	"id": "{FCB10F7A-DDF6-46D9-8A14-F9CDE8ADA71A}",
-	"author": "Kevin Heidrich",
+	"id": "{CE6DCECC-6177-4776-B38E-A5DA2F7C6F29}",
+	"author": "Markus Kromberg",
 	"name": "Ubiquiti UniFi Module",
-	"url": "www.kh-solutions.de",
-	"version": "1.0",
-	"build": 0,
-	"date": 0
+	"url": "www.markus-kromberg.de",
+        "compatibility": {
+            "version": "4.2",
+            "date": 1491343200
+        },
+        "version": "1.0",
+        "build": 0,
+        "date": 0
 }

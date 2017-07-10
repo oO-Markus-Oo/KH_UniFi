@@ -10,8 +10,8 @@ foreach($wlanList->data as $wlan)
 {
 	$ident = $wlan->_id;
 
-	$rootCatID = CreateCategoryByName("WLAN", "WLAN" , $parentID);
-	$catID = CreateCategoryByName($wlan->name, $ident , $rootCatID);
+	$rootCatID = CreateCategoryByNameIdent("WLAN", "WLAN" , $parentID);
+	$catID = CreateCategoryByNameIdent($wlan->name, $ident , $rootCatID);
 	CreateVariable("ID", 3,$wlan->_id , $ident."_id", $catID);
 	CreateVariable("Enabled", 0,$wlan->enabled , $ident."_enabled", $catID);
 

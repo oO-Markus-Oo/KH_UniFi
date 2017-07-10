@@ -30,47 +30,47 @@ class UniFi extends IPSModule
         $this->userName = $this->ReadPropertyString("UserName");
         $this->userPassword = $this->ReadPropertyString("UserPassword");
 
-		$this->RegisterVariableString("ClientHTMLBox", "ClientHTMLBox", "~HTMLBox");
-		
-		$updateClientsScript = file_get_contents(__DIR__ . "/createClientList.php");
-		$scriptID = $this->RegisterScript("updateClients", "updateClients", $updateClientsScript);
-		IPS_SetScriptTimer($scriptID, 60); 
-		        
-		$updateWLANScript = file_get_contents(__DIR__ . "/createWLANList.php");
-		$scriptID = $this->RegisterScript("updateWLAN", "updateWLAN", $updateWLANScript);
-		IPS_SetScriptTimer($scriptID, 60); 
+        $this->RegisterVariableString("ClientHTMLBox", "ClientHTMLBox", "~HTMLBox");
 
-		$setWLANScript = file_get_contents(__DIR__ . "/setWLAN.php");
-		$this->RegisterScript("setWLAN", "setWLAN", $setWLANScript);
+        $updateClientsScript = file_get_contents(__DIR__ . "/createClientList.php");
+        $scriptID = $this->RegisterScript("updateClients", "updateClients", $updateClientsScript);
+        IPS_SetScriptTimer($scriptID, 60); 
+
+        $updateWLANScript = file_get_contents(__DIR__ . "/createWLANList.php");
+        $scriptID = $this->RegisterScript("updateWLAN", "updateWLAN", $updateWLANScript);
+        IPS_SetScriptTimer($scriptID, 60); 
+
+        $setWLANScript = file_get_contents(__DIR__ . "/setWLAN.php");
+        $this->RegisterScript("setWLAN", "setWLAN", $setWLANScript);
 
 	}
     
 	private function Login()
 	{
-        $this->baseURL = $this->ReadPropertyString("IPAddress");
-        $this->userName = $this->ReadPropertyString("UserName");
-        $this->userPassword = $this->ReadPropertyString("UserPassword");
+            $this->baseURL = $this->ReadPropertyString("IPAddress");
+            $this->userName = $this->ReadPropertyString("UserName");
+            $this->userPassword = $this->ReadPropertyString("UserPassword");
 
-		# init curl object and set session-wide options
-		$this->ch = curl_init();
-	 
+            # init curl object and set session-wide options
+            $this->ch = curl_init();
 
-		curl_setopt($this->ch, CURLOPT_RETURNTRANSFER, TRUE);
-		curl_setopt($this->ch, CURLOPT_SSL_VERIFYPEER, FALSE);
-		curl_setopt($this->ch, CURLOPT_SSL_VERIFYHOST, FALSE);
-		curl_setopt($this->ch, CURLOPT_COOKIEFILE, "/tmp/unifi_cookie");
-		curl_setopt($this->ch, CURLOPT_COOKIEJAR, "/tmp/unifi_cookie");
-		curl_setopt($this->ch, CURLOPT_SSLVERSION, 1); //set TLSv1 (SSLv3 is no longer supported)
 
-		# authenticate against unifi controller
-		$url = $this->baseURL."/api/login";
-		$json = "{'username':'".$this->userName."', 'password':'".$this->userPassword."'}";
+            curl_setopt($this->ch, CURLOPT_RETURNTRANSFER, TRUE);
+            curl_setopt($this->ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+            curl_setopt($this->ch, CURLOPT_SSL_VERIFYHOST, FALSE);
+            curl_setopt($this->ch, CURLOPT_COOKIEFILE, "/tmp/unifi_cookie");
+            curl_setopt($this->ch, CURLOPT_COOKIEJAR, "/tmp/unifi_cookie");
+            curl_setopt($this->ch, CURLOPT_SSLVERSION, 1); //set TLSv1 (SSLv3 is no longer supported)
 
-		curl_setopt($this->ch, CURLOPT_URL, $url);
-		curl_setopt($this->ch, CURLOPT_POST, 1);
-		curl_setopt($this->ch, CURLOPT_POSTFIELDS, $json);
-		
-		curl_exec($this->ch);
+            # authenticate against unifi controller
+            $url = $this->baseURL."/api/login";
+            $json = "{'username':'".$this->userName."', 'password':'".$this->userPassword."'}";
+
+            curl_setopt($this->ch, CURLOPT_URL, $url);
+            curl_setopt($this->ch, CURLOPT_POST, 1);
+            curl_setopt($this->ch, CURLOPT_POSTFIELDS, $json);
+
+            curl_exec($this->ch);
 	}
 
 	private function Logout()

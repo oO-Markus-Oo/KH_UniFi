@@ -73,8 +73,8 @@ if (is_object($clientList))
 
 
 		$ident = str_replace(":","",$client->mac);
-		$rootCatID = CreateCategoryByName("Clients", "Clients" , $parentID);
-		$catID = CreateCategoryByName($clientName, $ident."_name" , $rootCatID);
+		$rootCatID = CreateCategoryByNameIdent("Clients", "Clients" , $parentID);
+		$catID = CreateCategoryByNameIdent($clientName, $ident."_name" , $rootCatID);
 		CreateVariable("MAC", 3,$client->mac , $ident."_mac", $catID);
 		CreateVariable("IP", 3,$client->ip , $ident."_ip", $catID);
 		CreateVariable("AP Name", 3,$apName , $ident."_apname", $catID);

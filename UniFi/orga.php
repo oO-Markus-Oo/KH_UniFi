@@ -1,11 +1,11 @@
 <?php
 
-if (!function_exists('CreateCategoryByName'))
+if (!function_exists('CreateCategoryByNameIdent'))
 {
-function CreateCategoryByName($name, $Ident='', $ParentID=0, $pos=0, $hidden=false)
+function CreateCategoryByNameIdent($name, $Ident='', $ParentID=0, $pos=0, $hidden=false)
 {
   global $_IPS;
-  if ($Ident <> '') $CatID = @IPS_GetObjectIDByIdent ($Ident, $ParentID);
+  if ($Ident <> '') $Catid = @IPS_GetObjectIDByIdent ($Ident, $ParentID);
   if ($Ident == '') $Catid = @IPS_GetCategoryIDByName ($name, $ParentID);
   
   if($Catid === false)

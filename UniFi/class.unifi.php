@@ -267,7 +267,9 @@ class UnifiApi
      */
     public function block_sta($mac)
     {
-        if (!$this->is_loggedin) return false;
+        if (!$this->is_loggedin) {
+            return false;
+        }
         $mac             = strtolower($mac);
         $json            = json_encode(['cmd' => 'block-sta', 'mac' => $mac]);
         $content_decoded = json_decode($this->exec_curl($this->baseurl.'/api/s/'.$this->site.'/cmd/stamgr', 'json='.$json));

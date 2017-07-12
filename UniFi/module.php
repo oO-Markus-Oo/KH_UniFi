@@ -215,14 +215,9 @@ class UniFi extends IPSModule {
         foreach ($wlanList->data as $wlan) {
             $ident = $wlan->_id;
             $catID = $this->CreateCategoryByNameIdent($wlan->name, $ident, $instance_WLAN_ID);
-            #CreateVariable("ID", 3, $wlan->_id, $ident . "_id", $catID);
-            #CreateVariable("Enabled", 0, $wlan->enabled, $ident . "_enabled", $catID);
-#
-            #$enabledID = IPS_GetVariableIDByName("Enabled", $catID);
-           # IPS_SetVariableCustomAction($enabledID, $setWLANID);
-            #IPS_SetVariableCustomProfile($enabledID, "~Switch");
-
-            #CreateVariable("Security", 3, $wlan->security, $ident . "_security", $catID);
+            $this->CreateVariable("ID", 3, $wlan->_id, $ident . "_id", $catID);
+            $this->CreateVariable("Enabled", 0, $wlan->enabled, $ident . "_enabled", $catID);
+            $this->CreateVariable("Security", 3, $wlan->security, $ident . "_security", $catID);
         }
     }
 

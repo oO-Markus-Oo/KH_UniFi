@@ -35,6 +35,7 @@ class UniFi extends IPSModule {
         $instance_Clients_ID = $this->CreateCategoryByIdent($instance_id_parent, "Clients", "Clients");
         $instance_WLAN_ID    = $this->CreateCategoryByIdent($instance_id_parent, "WLAN", "WLAN");
 
+        GetWLANnetworks($instance_WLAN_ID);
         #$updateClientsScript = file_get_contents(__DIR__ . "/createClientList.php");
         #$updateClientsScriptID = $this->RegisterScript("updateClients", "updateClients", $updateClientsScript);
         #IPS_SetScriptTimer($updateClientsScriptID, $this->checkInterval);
@@ -235,6 +236,24 @@ class UniFi extends IPSModule {
             IPS_SetIdent($VarID, $Ident);
         }
         SetVariable($VarID, $Type, $Value);
+    }
+    
+    function GetWLANnetworks($instance_WLAN_ID) {
+        $parentID = IPS_GetParent($_IPS["SELF"]);
+        $wlanList = GetWLANConfig();
+
+        foreach ($wlanList->data as $wlan) {
+            $ident = $wlan->_id;
+            $catID = CreateCategoryByNameIdent($wlan->name, $ident, $instance_WLAN_ID);
+            #CreateVariable("ID", 3, $wlan->_id, $ident . "_id", $catID);
+            #CreateVariable("Enabled", 0, $wlan->enabled, $ident . "_enabled", $catID);
+#
+            #$enabledID = IPS_GetVariableIDByName("Enabled", $catID);
+           # IPS_SetVariableCustomAction($enabledID, $setWLANID);
+            #IPS_SetVariableCustomProfile($enabledID, "~Switch");
+
+            #CreateVariable("Security", 3, $wlan->security, $ident . "_security", $catID);
+        }
     }
 }
 

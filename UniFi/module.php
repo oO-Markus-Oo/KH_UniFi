@@ -38,61 +38,36 @@ class UniFi extends IPSModule {
      /**
      * Login to UniFi Controller
      */
-    public function login()
-    {
-        $this->$ch = $this->get_curl_obj();
+    private function Login() {
+        $this->baseURL = $this->ReadPropertyString("IPAddress");
+        $this->userName = $this->ReadPropertyString("UserName");
+        $this->userPassword = $this->ReadPropertyString("UserPassword");
 
-        curl_setopt($this->$ch, CURLOPT_HEADER, 1);
-        curl_setopt($this->$ch, CURLOPT_REFERER, $this->baseURL.'/login');
-        curl_setopt($this->$ch, CURLOPT_URL, $this->baseURL.'/api/login');
-        curl_setopt($this->$ch, CURLOPT_POSTFIELDS, json_encode(['username' => $this->user, 'password' => $this->password]));
+        # init curl object and set session-wide options
+        $this->ch = curl_init();
 
-        if (($content = curl_exec($this->$ch)) === false) {
-            error_log('cURL error: '.curl_error($this->$ch));
-        }
 
-        if ($this->debug) {
-            curl_setopt($this->$ch, CURLOPT_VERBOSE, true);
+        curl_setopt($this->ch, CURLOPT_RETURNTRANSFER, TRUE);
+        curl_setopt($this->ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+        curl_setopt($this->ch, CURLOPT_SSL_VERIFYHOST, FALSE);
+        curl_setopt($this->ch, CURLOPT_COOKIEFILE, "/tmp/unifi_cookie");
+        curl_setopt($this->ch, CURLOPT_COOKIEJAR, "/tmp/unifi_cookie");
+        curl_setopt($this->ch, CURLOPT_SSLVERSION, 1); //set TLSv1 (SSLv3 is no longer supported)
+        # authenticate against unifi controller
+        $url = $this->baseURL . "/api/login";
+        $json = "{'username':'" . $this->userName . "', 'password':'" . $this->userPassword . "'}";
 
-            print '<pre>';
-            print PHP_EOL.'-----------LOGIN-------------'.PHP_EOL;
-            print_r (curl_getinfo($this->$ch));
-            print PHP_EOL.'----------RESPONSE-----------'.PHP_EOL;
-            print $content;
-            print PHP_EOL.'-----------------------------'.PHP_EOL;
-            print '</pre>';
-        }
+        curl_setopt($this->ch, CURLOPT_URL, $url);
+        curl_setopt($this->ch, CURLOPT_POST, 1);
+        curl_setopt($this->ch, CURLOPT_POSTFIELDS, $json);
 
-        $header_size = curl_getinfo($this->$ch, CURLINFO_HEADER_SIZE);
-        $body        = trim(substr($content, $header_size));
-        $code        = curl_getinfo($this->$ch, CURLINFO_HTTP_CODE);
-
-        curl_close ($this->$ch);
-
-        preg_match_all('|Set-Cookie: (.*);|U', substr($content, 0, $header_size), $results);
-        if (isset($results[1])) {
-            $this->cookies = implode(';', $results[1]);
-            if (!empty($body)) {
-                if (($code >= 200) && ($code < 400)) {
-                    if (strpos($this->cookies, 'unifises') !== false) {
-                        $this->is_loggedin = true;
-                    }
-                }
-
-                if ($code === 400) {
-                     error_log('We have received an HTTP response status: 400. Probably a controller login failure');
-                     return $code;
-                }
-            }
-        }
-
-        return $this->is_loggedin;
+        curl_exec($this->ch);
     }
 
     /**
      * Logout from UniFi Controller
      */
-    public function logout()
+    private function logout()
     {
         if (!$this->is_loggedin) return false;
         $this->exec_curl($this->baseURL.'/logout');
@@ -111,7 +86,7 @@ class UniFi extends IPSModule {
      * sets debug mode to true or false, returns false if a non-boolean parameter was passed
      * required parameter <enable> = boolean; true will enable debug mode, false will disable it
      */
-    public function set_debug($enable)
+    private function set_debug($enable)
     {
         if ($enable) {
             $this->debug = true;
@@ -131,7 +106,7 @@ class UniFi extends IPSModule {
      * NOTE:
      * this method can be used to get the full error as returned by the controller
      */
-    public function get_last_results_raw($return_json = false)
+    private function get_last_results_raw($return_json = false)
     {
         if ($this->last_results_raw != null) {
             if ($return_json) {
@@ -149,7 +124,7 @@ class UniFi extends IPSModule {
      * ----------------------
      * returns the error message of the last method called in PHP stdClass Object format, returns false if not set
      */
-    public function get_last_error_message()
+    private function get_last_error_message()
     {
         if (isset($this->last_error_message)) {
             return $this->last_error_message;
@@ -173,7 +148,7 @@ class UniFi extends IPSModule {
      * optional parameter <MBytes>  = data transfer limit in MB
      * optional parameter <ap_mac>  = AP MAC address to which client is connected, should result in faster authorization
      */
-    public function authorize_guest($mac, $minutes, $up = null, $down = null, $MBytes = null, $ap_mac = null)
+    private function authorize_guest($mac, $minutes, $up = null, $down = null, $MBytes = null, $ap_mac = null)
     {
         if (!$this->is_loggedin) return false;
         $mac  = strtolower($mac);
@@ -197,7 +172,7 @@ class UniFi extends IPSModule {
      * return true on success
      * required parameter <mac> = client MAC address
      */
-    public function unauthorize_guest($mac)
+    private function unauthorize_guest($mac)
     {
         if (!$this->is_loggedin) return false;
         $mac             = strtolower($mac);
@@ -212,7 +187,7 @@ class UniFi extends IPSModule {
      * return true on success
      * required parameter <mac> = client MAC address
      */
-    public function reconnect_sta($mac)
+    private function reconnect_sta($mac)
     {
         if (!$this->is_loggedin) return false;
         $mac             = strtolower($mac);
@@ -227,7 +202,7 @@ class UniFi extends IPSModule {
      * return true on success
      * required parameter <mac> = client MAC address
      */
-    public function block_sta($mac)
+    private function block_sta($mac)
     {
         if (!$this->is_loggedin) {
             return false;
@@ -244,7 +219,7 @@ class UniFi extends IPSModule {
      * return true on success
      * required parameter <mac> = client MAC address
      */
-    public function unblock_sta($mac)
+    private function unblock_sta($mac)
     {
         if (!$this->is_loggedin) return false;
         $mac             = strtolower($mac);
@@ -263,7 +238,7 @@ class UniFi extends IPSModule {
      * NOTES:
      * - when note is empty or not set, the existing note for the user will be removed and "noted" attribute set to false
      */
-    public function set_sta_note($user_id, $note = null)
+    private function set_sta_note($user_id, $note = null)
     {
         if (!$this->is_loggedin) return false;
         $noted           = (is_null($note)) || (empty($note)) ? false : true;
@@ -282,7 +257,7 @@ class UniFi extends IPSModule {
      * NOTES:
      * - when name is empty or not set, the existing name for the user will be removed
      */
-    public function set_sta_name($user_id, $name = null)
+    private function set_sta_name($user_id, $name = null)
     {
         if (!$this->is_loggedin) return false;
         $json            = json_encode(['name' => $name]);
@@ -301,7 +276,7 @@ class UniFi extends IPSModule {
      * - defaults to the past 52*7*24 hours
      * - bytes" are no longer returned with controller version 4.9.1 and later
      */
-    public function stat_daily_site($start = null, $end = null)
+    private function stat_daily_site($start = null, $end = null)
     {
         if (!$this->is_loggedin) return false;
         $end             = is_null($end) ? ((time()-(time() % 3600))*1000) : $end;
@@ -323,7 +298,7 @@ class UniFi extends IPSModule {
      * - defaults to the past 7*24 hours
      * - "bytes" are no longer returned with controller version 4.9.1 and later
      */
-    public function stat_hourly_site($start = null, $end = null)
+    private function stat_hourly_site($start = null, $end = null)
     {
         if (!$this->is_loggedin) return false;
         $end             = is_null($end) ? ((time())*1000) : $end;
@@ -345,7 +320,7 @@ class UniFi extends IPSModule {
      * - defaults to the past 7*24 hours
      * - UniFi controller does not keep these stats longer than 5 hours with versions < 4.6.6
      */
-    public function stat_hourly_aps($start = null, $end = null)
+    private function stat_hourly_aps($start = null, $end = null)
     {
         if (!$this->is_loggedin) return false;
         $end             = is_null($end) ? ((time())*1000) : $end;
@@ -366,7 +341,7 @@ class UniFi extends IPSModule {
      * - defaults to the past 7*24 hours
      * - UniFi controller does not keep these stats longer than 5 hours with versions < 4.6.6
      */
-    public function stat_daily_aps($start = null, $end = null)
+    private function stat_daily_aps($start = null, $end = null)
     {
         if (!$this->is_loggedin) return false;
         $end             = is_null($end) ? ((time())*1000) : $end;
@@ -387,7 +362,7 @@ class UniFi extends IPSModule {
      * NOTES:
      * - defaults to the past 7*24 hours
      */
-    public function stat_sessions($start = null, $end = null, $mac = null)
+    private function stat_sessions($start = null, $end = null, $mac = null)
     {
         if (!$this->is_loggedin) return false;
         $end             = is_null($end) ? time() : $end;
@@ -406,7 +381,7 @@ class UniFi extends IPSModule {
      * required parameter <mac>   = client MAC address
      * optional parameter <limit> = maximum number of sessions to get (defaults to 5)
      */
-    public function stat_sta_sessions_latest($mac, $limit = null)
+    private function stat_sta_sessions_latest($mac, $limit = null)
     {
         if (!$this->is_loggedin) return false;
         $limit           = is_null($limit) ? 5 : $limit;
@@ -425,7 +400,7 @@ class UniFi extends IPSModule {
      * NOTES:
      * - defaults to the past 7*24 hours
      */
-    public function stat_auths($start = null, $end = null)
+    private function stat_auths($start = null, $end = null)
     {
         if (!$this->is_loggedin) return false;
         $end             = is_null($end) ? time() : $end;
@@ -445,7 +420,7 @@ class UniFi extends IPSModule {
      * - <historyhours> is only used to select clients that were online within that period,
      *   the returned stats per client are all-time totals, irrespective of the value of <historyhours>
      */
-    public function stat_allusers($historyhours = 8760)
+    private function stat_allusers($historyhours = 8760)
     {
         if (!$this->is_loggedin) return false;
         $json            = json_encode(['type' => 'all', 'conn' => 'all', 'within' => $historyhours]);
@@ -459,7 +434,7 @@ class UniFi extends IPSModule {
      * returns an array of guest device objects with valid access
      * optional parameter <within> = time frame in hours to go back to list guests with valid access (default = 24*365 hours)
      */
-    public function list_guests($within = 8760)
+    private function list_guests($within = 8760)
     {
         if (!$this->is_loggedin) return false;
         $json            = json_encode(['within' => $within]);
@@ -473,7 +448,7 @@ class UniFi extends IPSModule {
      * returns an array of online client device objects, or in case of a single device request, returns a single client device object
      * optional parameter <client_mac> = the MAC address of a single online client device for which the call must be made
      */
-    public function list_clients($client_mac = null)
+    private function list_clients($client_mac = null)
     {
         if (!$this->is_loggedin) return false;
         $content_decoded = json_decode($this->exec_curl($this->baseURL.'/api/s/'.$this->site.'/stat/sta/'.trim($client_mac)));
@@ -486,7 +461,7 @@ class UniFi extends IPSModule {
      * returns an object with the client device information
      * required parameter <client_mac> = client device MAC address
      */
-    public function stat_client($client_mac)
+    private function stat_client($client_mac)
     {
         if (!$this->is_loggedin) return false;
 	    $content_decoded = json_decode($this->exec_curl($this->baseURL.'/api/s/'.$this->site.'/stat/user/'.trim($client_mac)));
@@ -498,7 +473,7 @@ class UniFi extends IPSModule {
      * ----------------
      * returns an array of user group objects
      */
-    public function list_usergroups()
+    private function list_usergroups()
     {
         if (!$this->is_loggedin) return false;
         $content_decoded = json_decode($this->exec_curl($this->baseURL.'/api/s/'.$this->site.'/list/usergroup'));
@@ -512,7 +487,7 @@ class UniFi extends IPSModule {
      * required parameter <user_id>  = id of the user device to be modified
      * required parameter <group_id> = id of the user group to assign user to
      */
-    public function set_usergroup($user_id, $group_id)
+    private function set_usergroup($user_id, $group_id)
     {
         if (!$this->is_loggedin) return false;
         $json            = json_encode(['usergroup_id' => $group_id]);
@@ -531,7 +506,7 @@ class UniFi extends IPSModule {
      * optional parameter <group_up>   = limit upload bandwidth in Kbps (default = -1, which sets bandwidth to unlimited)
      *
      */
-    public function edit_usergroup($group_id, $site_id, $group_name, $group_dn = -1, $group_up = -1)
+    private function edit_usergroup($group_id, $site_id, $group_name, $group_dn = -1, $group_up = -1)
     {
         if (!$this->is_loggedin) return false;
         $this->request_type = 'PUT';
@@ -548,7 +523,7 @@ class UniFi extends IPSModule {
      * optional parameter <group_dn>   = limit download bandwidth in Kbps (default = -1, which sets bandwidth to unlimited)
      * optional parameter <group_up>   = limit upload bandwidth in Kbps (default = -1, which sets bandwidth to unlimited)
      */
-    public function add_usergroup($group_name, $group_dn = -1, $group_up = -1)
+    private function add_usergroup($group_name, $group_dn = -1, $group_up = -1)
     {
         if (!$this->is_loggedin) return false;
         $json               = json_encode(['name' => $group_name, 'qos_rate_max_down' => $group_dn, 'qos_rate_max_up' => $group_up]);
@@ -562,7 +537,7 @@ class UniFi extends IPSModule {
      * returns true on success
      * required parameter <group_id> = id of the user group
      */
-    public function delete_usergroup($group_id)
+    private function delete_usergroup($group_id)
     {
         if (!$this->is_loggedin) return false;
         $this->request_type = 'DELETE';
@@ -575,7 +550,7 @@ class UniFi extends IPSModule {
      * -------------------
      * returns an array of health metric objects
      */
-    public function list_health()
+    private function list_health()
     {
         if (!$this->is_loggedin) return false;
         $content_decoded = json_decode($this->exec_curl($this->baseURL.'/api/s/'.$this->site.'/stat/health'));
@@ -587,7 +562,7 @@ class UniFi extends IPSModule {
      * ----------------------
      * returns an array of dashboard metric objects (available since controller version 4.9.1.alpha)
      */
-    public function list_dashboard()
+    private function list_dashboard()
     {
         if (!$this->is_loggedin) return false;
         $content_decoded = json_decode($this->exec_curl($this->baseURL.'/api/s/'.$this->site.'/stat/dashboard'));
@@ -599,7 +574,7 @@ class UniFi extends IPSModule {
      * -----------------
      * returns an array of known user device objects
      */
-    public function list_users()
+    private function list_users()
     {
         if (!$this->is_loggedin) return false;
         $content_decoded = json_decode($this->exec_curl($this->baseURL.'/api/s/'.$this->site.'/list/user'));
@@ -612,7 +587,7 @@ class UniFi extends IPSModule {
      * returns an array of known device objects (or a single device when using the <device_mac> parameter)
      * optional parameter <device_mac> = the MAC address of a single device for which the call must be made
      */
-    public function list_devices($device_mac = null)
+    private function list_devices($device_mac = null)
     {
         if (!$this->is_loggedin) return false;
         $content_decoded = json_decode($this->exec_curl($this->baseURL.'/api/s/'.$this->site.'/stat/device/'.$device_mac));
@@ -625,7 +600,7 @@ class UniFi extends IPSModule {
      * returns an array of known rogue access point objects
      * optional parameter <within> = hours to go back to list discovered "rogue" access points (default = 24 hours)
      */
-    public function list_rogueaps($within = '24')
+    private function list_rogueaps($within = '24')
     {
         if (!$this->is_loggedin) return false;
         $json            = json_encode(['within' => $within]);
@@ -638,7 +613,7 @@ class UniFi extends IPSModule {
      * ----------
      * returns a list sites hosted on this controller with some details
      */
-    public function list_sites()
+    private function list_sites()
     {
         if (!$this->is_loggedin) return false;
         $content_decoded = json_decode($this->exec_curl($this->baseURL.'/api/self/sites'));
@@ -652,7 +627,7 @@ class UniFi extends IPSModule {
      *
      * NOTES: this endpoint was introduced with controller version 5.2.9
      */
-    public function stat_sites()
+    private function stat_sites()
     {
         if (!$this->is_loggedin) return false;
         $content_decoded = json_decode($this->exec_curl($this->baseURL.'/api/stat/sites'));
@@ -667,7 +642,7 @@ class UniFi extends IPSModule {
      *
      * NOTES: immediately after being added, the new site will be available in the output of the "list_sites" function
      */
-    public function add_site($description)
+    private function add_site($description)
     {
         if (!$this->is_loggedin) return false;
         $json            = json_encode(['desc' => $description, 'cmd' => 'add-site']);
@@ -681,7 +656,7 @@ class UniFi extends IPSModule {
      * return true on success
      * required parameter <site_id> = 24 char string; _id of the site to delete
      */
-    public function delete_site($site_id)
+    private function delete_site($site_id)
     {
         if (!$this->is_loggedin) return false;
         $json            = json_encode(['site' => $site_id, 'cmd' => 'delete-site']);
@@ -694,7 +669,7 @@ class UniFi extends IPSModule {
      * -----------
      * returns an array containing administrator objects for selected site
      */
-    public function list_admins()
+    private function list_admins()
     {
         if (!$this->is_loggedin) return false;
         $json            = json_encode(['cmd' => 'get-admins']);
@@ -707,7 +682,7 @@ class UniFi extends IPSModule {
      * ----------------
      * returns an array containing known wlan_groups
      */
-    public function list_wlan_groups()
+    private function list_wlan_groups()
     {
         if (!$this->is_loggedin) return false;
         $content_decoded = json_decode($this->exec_curl($this->baseURL.'/api/s/'.$this->site.'/list/wlangroup'));
@@ -719,7 +694,7 @@ class UniFi extends IPSModule {
      * ------------
      * returns an array of known sysinfo data
      */
-    public function stat_sysinfo()
+    private function stat_sysinfo()
     {
         if (!$this->is_loggedin) return false;
         $content_decoded = json_decode($this->exec_curl($this->baseURL.'/api/s/'.$this->site.'/stat/sysinfo'));
@@ -731,7 +706,7 @@ class UniFi extends IPSModule {
      * ---------
      * returns an array of information about the logged in user
      */
-    public function list_self()
+    private function list_self()
     {
         if (!$this->is_loggedin) return false;
         $content_decoded = json_decode($this->exec_curl($this->baseURL.'/api/s/'.$this->site.'/self'));
@@ -743,7 +718,7 @@ class UniFi extends IPSModule {
      * ----------------
      * returns an array of network configuration data
      */
-    public function list_networkconf()
+    private function list_networkconf()
     {
         if (!$this->is_loggedin) return false;
         $content_decoded = json_decode($this->exec_curl($this->baseURL.'/api/s/'.$this->site.'/list/networkconf'));
@@ -756,7 +731,7 @@ class UniFi extends IPSModule {
      * returns an array of hotspot voucher objects
      * optional parameter <create_time> = Unix timestamp in seconds
      */
-    public function stat_voucher($create_time = null)
+    private function stat_voucher($create_time = null)
     {
         if (!$this->is_loggedin) return false;
         $json = json_encode([]);
@@ -774,7 +749,7 @@ class UniFi extends IPSModule {
      * returns an array of hotspot payments
      * optional parameter <within> = number of hours to go back to fetch payments
      */
-    public function stat_payment($within = null)
+    private function stat_payment($within = null)
     {
         if (!$this->is_loggedin) return false;
         $url_suffix = '';
@@ -794,7 +769,7 @@ class UniFi extends IPSModule {
      * required parameter <x_password> = clear text password for the hotspot operator
      * optional parameter <note>       = note to attach to the hotspot operator
      */
-    public function create_hotspotop($name, $x_password, $note = null)
+    private function create_hotspotop($name, $x_password, $note = null)
     {
         if (!$this->is_loggedin) return false;
         $json = ['name' => $name, 'x_password' => $x_password];
@@ -813,7 +788,7 @@ class UniFi extends IPSModule {
      * ----------------------
      * returns an array of hotspot operators
      */
-    public function list_hotspotop()
+    private function list_hotspotop()
     {
         if (!$this->is_loggedin) return false;
         $content_decoded = json_decode($this->exec_curl($this->baseURL.'/api/s/'.$this->site.'/list/hotspotop'));
@@ -833,7 +808,7 @@ class UniFi extends IPSModule {
      * optional parameter <down>    = download speed limit in kbps
      * optional parameter <MBytes>  = data transfer limit in MB
      */
-    public function create_voucher($minutes, $count = 1, $quota = '0', $note = null, $up = null, $down = null, $MBytes = null)
+    private function create_voucher($minutes, $count = 1, $quota = '0', $note = null, $up = null, $down = null, $MBytes = null)
     {
         if (!$this->is_loggedin) return false;
         $json = ['cmd' => 'create-voucher', 'expire' => $minutes, 'n' => $count, 'quota' => $quota];
@@ -856,7 +831,7 @@ class UniFi extends IPSModule {
      * return true on success
      * required parameter <voucher_id> = 24 char string; _id of the voucher to revoke
      */
-    public function revoke_voucher($voucher_id)
+    private function revoke_voucher($voucher_id)
     {
         if (!$this->is_loggedin) return false;
         $json            = json_encode(['_id' => $voucher_id, 'cmd' => 'delete-voucher']);
@@ -870,7 +845,7 @@ class UniFi extends IPSModule {
      * return true on success
      * required parameter <guest_id> = 24 char string; _id of the guest to extend validity
      */
-    public function extend_guest_validity($guest_id)
+    private function extend_guest_validity($guest_id)
     {
         if (!$this->is_loggedin) return false;
         $json            = json_encode(['_id' => $guest_id, 'cmd' => 'extend']);
@@ -883,7 +858,7 @@ class UniFi extends IPSModule {
      * --------------------------
      * returns an array of port forwarding stats
      */
-    public function list_portforward_stats()
+    private function list_portforward_stats()
     {
         if (!$this->is_loggedin) return false;
         $content_decoded = json_decode($this->exec_curl($this->baseURL.'/api/s/'.$this->site.'/stat/portforward'));
@@ -895,7 +870,7 @@ class UniFi extends IPSModule {
      * --------------
      * returns an array of DPI stats
      */
-    public function list_dpi_stats()
+    private function list_dpi_stats()
     {
         if (!$this->is_loggedin) return false;
         $content_decoded = json_decode($this->exec_curl($this->baseURL.'/api/s/'.$this->site.'/stat/dpi'));
@@ -907,7 +882,7 @@ class UniFi extends IPSModule {
      * ---------------------
      * returns an array of currently allowed channels
      */
-    public function list_current_channels()
+    private function list_current_channels()
     {
         if (!$this->is_loggedin) return false;
         $content_decoded = json_decode($this->exec_curl($this->baseURL.'/api/s/'.$this->site.'/stat/current-channel'));
@@ -919,7 +894,7 @@ class UniFi extends IPSModule {
      * -----------------------------
      * returns an array of port forwarding settings
      */
-    public function list_portforwarding()
+    private function list_portforwarding()
     {
         if (!$this->is_loggedin) return false;
         $content_decoded = json_decode($this->exec_curl($this->baseURL.'/api/s/'.$this->site.'/list/portforward'));
@@ -931,7 +906,7 @@ class UniFi extends IPSModule {
      * -------------------------
      * returns an array of dynamic DNS settings
      */
-    public function list_dynamicdns()
+    private function list_dynamicdns()
     {
         if (!$this->is_loggedin) return false;
         $content_decoded = json_decode($this->exec_curl($this->baseURL.'/api/s/'.$this->site.'/list/dynamicdns'));
@@ -943,7 +918,7 @@ class UniFi extends IPSModule {
      * -----------------------
      * returns an array of port configurations
      */
-    public function list_portconf()
+    private function list_portconf()
     {
         if (!$this->is_loggedin) return false;
         $content_decoded = json_decode($this->exec_curl($this->baseURL.'/api/s/'.$this->site.'/list/portconf'));
@@ -955,7 +930,7 @@ class UniFi extends IPSModule {
      * --------------------
      * returns an array of VoIP extensions
      */
-    public function list_extension()
+    private function list_extension()
     {
         if (!$this->is_loggedin) return false;
         $content_decoded = json_decode($this->exec_curl($this->baseURL.'/api/s/'.$this->site.'/list/extension'));
@@ -967,7 +942,7 @@ class UniFi extends IPSModule {
      * ------------------
      * returns an array of site configuration settings
      */
-    public function list_settings()
+    private function list_settings()
     {
         if (!$this->is_loggedin) return false;
         $content_decoded = json_decode($this->exec_curl($this->baseURL.'/api/s/'.$this->site.'/get/setting'));
@@ -980,7 +955,7 @@ class UniFi extends IPSModule {
      * return true on success
      * required parameter <mac> = device MAC address
      */
-    public function adopt_device($mac)
+    private function adopt_device($mac)
     {
         if (!$this->is_loggedin) return false;
         $mac             = strtolower($mac);
@@ -995,7 +970,7 @@ class UniFi extends IPSModule {
      * return true on success
      * required parameter <mac> = device MAC address
      */
-    public function restart_ap($mac)
+    private function restart_ap($mac)
     {
         if (!$this->is_loggedin) return false;
         $mac             = strtolower($mac);
@@ -1016,7 +991,7 @@ class UniFi extends IPSModule {
      * - appears to only be supported for access points
      * - available since controller versions 5.2.X
      */
-    public function disable_ap($ap_id, $disable)
+    private function disable_ap($ap_id, $disable)
     {
         if (!$this->is_loggedin) return false;
         $this->request_type = 'PUT';
@@ -1037,7 +1012,7 @@ class UniFi extends IPSModule {
      * NOTES:
      * - available since controller versions 5.2.X
      */
-    public function led_override($device_id, $override_mode)
+    private function led_override($device_id, $override_mode)
     {
         if (!$this->is_loggedin) return false;
         $this->request_type    = 'PUT';
@@ -1061,7 +1036,7 @@ class UniFi extends IPSModule {
      * NOTES:
      * replaces the old set_locate_ap() and unset_locate_ap() methods/functions
      */
-    public function locate_ap($mac, $enable)
+    private function locate_ap($mac, $enable)
     {
         if (!$this->is_loggedin) return false;
         $mac             = strtolower($mac);
@@ -1077,7 +1052,7 @@ class UniFi extends IPSModule {
      * return true on success
      * required parameter <enable> = boolean; true will switch LEDs of all the access points ON, false will switch them OFF
      */
-    public function site_leds($enable)
+    private function site_leds($enable)
     {
         if (!$this->is_loggedin) return false;
         $json            = json_encode(['led_enabled' => (bool)$enable]);
@@ -1096,7 +1071,7 @@ class UniFi extends IPSModule {
      * required parameter <tx_power_mode>
      * required parameter <tx_power>(default=0)
      */
-    public function set_ap_radiosettings($ap_id, $radio, $channel, $ht, $tx_power_mode, $tx_power)
+    private function set_ap_radiosettings($ap_id, $radio, $channel, $ht, $tx_power_mode, $tx_power)
     {
         if (!$this->is_loggedin) return false;
         $json            = json_encode(['radio_table' => ['radio' => $radio, 'channel' => $channel, 'ht' => $ht, 'tx_power_mode' => $tx_power_mode, 'tx_power' =>$tx_power]]);
@@ -1120,7 +1095,7 @@ class UniFi extends IPSModule {
      * NOTES:
      * - both portal parameters are set to the same value!
      */
-    public function set_guestlogin_settings(
+    private function set_guestlogin_settings(
         $portal_enabled,
         $portal_customized,
         $redirect_enabled,
@@ -1153,7 +1128,7 @@ class UniFi extends IPSModule {
      * required parameter <ap_id>
      * required parameter <apname>
      */
-    public function rename_ap($ap_id, $apname)
+    private function rename_ap($ap_id, $apname)
     {
         if (!$this->is_loggedin) return false;
         $json            = json_encode(['name' => $apname]);
@@ -1183,7 +1158,7 @@ class UniFi extends IPSModule {
      * -----------------
      * TODO: Check parameter values
      */
-    public function create_wlan(
+    private function create_wlan(
         $name,
         $x_passphrase,
         $usergroup_id,
@@ -1229,7 +1204,7 @@ class UniFi extends IPSModule {
      * return true on success
      * required parameter <wlan_id> = 24 char string; _id of the wlan that can be found with the list_wlanconf() function
      */
-    public function delete_wlan($wlan_id)
+    private function delete_wlan($wlan_id)
     {
         if (!$this->is_loggedin) return false;
         $json            = json_encode([]);
@@ -1246,7 +1221,7 @@ class UniFi extends IPSModule {
      *                                     will be ignored if set to null
      * optional parameter <name>
      */
-    public function set_wlansettings($wlan_id, $x_passphrase, $name = null)
+    private function set_wlansettings($wlan_id, $x_passphrase, $name = null)
     {
         if (!$this->is_loggedin) return false;
         $json            = [];
@@ -1264,7 +1239,7 @@ class UniFi extends IPSModule {
      * required parameter <wlan_id>
      * required parameter <disable> = boolean; true disables the wlan, false enables it
      */
-    public function disable_wlan($wlan_id, $disable)
+    private function disable_wlan($wlan_id, $disable)
     {
         if (!$this->is_loggedin) return false;
         $action          = ($disable) ? false : true;
@@ -1282,7 +1257,7 @@ class UniFi extends IPSModule {
      * optional parameter <start>        = which event number to start with (useful for paging of results), default value is 0
      * optional parameter <limit>        = number of events to return, default value is 3000
      */
-    public function list_events($historyhours = 720, $start = 0, $limit = 3000)
+    private function list_events($historyhours = 720, $start = 0, $limit = 3000)
     {
         if (!$this->is_loggedin) return false;
         $json            = ['_sort' => '-time', 'within' => $historyhours, 'type' => null, '_start' => $start, '_limit' => $limit];
@@ -1296,7 +1271,7 @@ class UniFi extends IPSModule {
      * ----------------------
      * returns an array of wireless networks and settings
      */
-    public function list_wlanconf()
+    private function list_wlanconf()
     {
         if (!$this->is_loggedin) return false;
         $content_decoded = json_decode($this->exec_curl($this->baseURL.'/api/s/'.$this->site.'/list/wlanconf'));
@@ -1308,7 +1283,7 @@ class UniFi extends IPSModule {
      * -----------
      * returns an array of known alarms
      */
-    public function list_alarms()
+    private function list_alarms()
     {
         if (!$this->is_loggedin) return false;
         $content_decoded = json_decode($this->exec_curl($this->baseURL.'/api/s/'.$this->site.'/list/alarm'));
@@ -1321,7 +1296,7 @@ class UniFi extends IPSModule {
      * returns an array containing the alarm count
      * optional parameter <archived> = boolean; if true all alarms will be counted, if false only non-archived (active) alarms will be counted
      */
-    public function count_alarms($archived = null)
+    private function count_alarms($archived = null)
     {
         if (!$this->is_loggedin) return false;
         $url_suffix      = ($archived === false) ? '?archived=false' : null;
@@ -1338,7 +1313,7 @@ class UniFi extends IPSModule {
      * NOTES:
      * - updates the device to the latest firmware known to the controller
      */
-    public function upgrade_device($device_mac)
+    private function upgrade_device($device_mac)
     {
         if (!$this->is_loggedin) return false;
         $json            = ['mac' => $device_mac];
@@ -1358,7 +1333,7 @@ class UniFi extends IPSModule {
      * - updates the device to the firmware file at the given URL
      * - please take great care to select a valid firmware file for the device!
      */
-    public function upgrade_device_external($firmware_url, $device_mac)
+    private function upgrade_device_external($firmware_url, $device_mac)
     {
         if (!$this->is_loggedin) return false;
         $json            = ['url' => $firmware_url, 'mac' => $device_mac];
@@ -1373,7 +1348,7 @@ class UniFi extends IPSModule {
      * return true on success
      * required parameter <ap_mac> = MAC address of the AP
      */
-    public function spectrum_scan($ap_mac)
+    private function spectrum_scan($ap_mac)
     {
         if (!$this->is_loggedin) return false;
         $json            = ['cmd' => 'spectrum-scan', 'mac' => $ap_mac];
@@ -1388,7 +1363,7 @@ class UniFi extends IPSModule {
      * returns an object with relevant information (results if available) regarding the RF scanning state of the AP
      * required parameter <ap_mac> = MAC address of the AP
      */
-    public function spectrum_scan_state($ap_mac)
+    private function spectrum_scan_state($ap_mac)
     {
         if (!$this->is_loggedin) return false;
         $json            = json_encode($json);
@@ -1410,7 +1385,7 @@ class UniFi extends IPSModule {
      * NOTE:
      * changed function/method name to fit it's purpose
      */
-    public function list_aps($device_mac = null)
+    private function list_aps($device_mac = null)
     {
         return $this->list_devices($device_mac);
     }
@@ -1421,7 +1396,7 @@ class UniFi extends IPSModule {
      * return true on success
      * required parameter <mac> = device MAC address
      */
-    public function set_locate_ap($mac)
+    private function set_locate_ap($mac)
     {
         trigger_error(
             'Function set_locate_ap() has been deprecated, use locate_ap() instead.',
@@ -1436,7 +1411,7 @@ class UniFi extends IPSModule {
      * return true on success
      * required parameter <mac> = device MAC address
      */
-    public function unset_locate_ap($mac)
+    private function unset_locate_ap($mac)
     {
         trigger_error(
             'Function unset_locate_ap() has been deprecated, use locate_ap() instead.',
@@ -1450,7 +1425,7 @@ class UniFi extends IPSModule {
      * ---------------------------------------
      * return true on success
      */
-    public function site_ledson()
+    private function site_ledson()
     {
         trigger_error(
             'Function site_ledson() has been deprecated, use site_leds() instead.',
@@ -1464,7 +1439,7 @@ class UniFi extends IPSModule {
      * ----------------------------------------
      * return true on success
      */
-    public function site_ledsoff()
+    private function site_ledsoff()
     {
         trigger_error(
             'Function site_ledsoff() has been deprecated, use site_leds() instead.',
@@ -1614,7 +1589,7 @@ class UniFi extends IPSModule {
         curl_setopt($this->ch, CURLOPT_POSTFIELDS, "json={}");
         $response = curl_exec($this->ch);
 
-        $this->Logout();
+        $this->logout();
 
         if ($response !== false) {
             return json_decode($response);
@@ -1632,7 +1607,7 @@ class UniFi extends IPSModule {
         curl_setopt($this->ch, CURLOPT_POSTFIELDS, "json={}");
         $response = curl_exec($this->ch);
 
-        $this->Logout();
+        $this->logout();
 
         if ($response !== false) {
             return json_decode($response);
@@ -1650,7 +1625,7 @@ class UniFi extends IPSModule {
         curl_setopt($this->ch, CURLOPT_POSTFIELDS, "json=" . json_encode($config) . "");
         curl_exec($this->ch);
 
-        $this->Logout();
+        $this->logout();
     }
 
     private function CreateCategoryByNameIdent($name, $Ident = '', $ParentID = 0, $pos = 0, $hidden = false) {
@@ -1769,7 +1744,7 @@ class UniFi extends IPSModule {
         }
     }
 
-    public function ApplyChanges() {
+    private function ApplyChanges() {
         //Never delete this line!
         parent::ApplyChanges();
 

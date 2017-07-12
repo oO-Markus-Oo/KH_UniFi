@@ -1744,7 +1744,7 @@ class UniFi extends IPSModule {
         }
     }
 
-    private function ApplyChanges() {
+    public function ApplyChanges() {
         //Never delete this line!
         parent::ApplyChanges();
 

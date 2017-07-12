@@ -1,11 +1,10 @@
 <?
 class UniFi extends IPSModule {
 
-    var $ch;
-
     /**
      * public properties
      */
+    public $ch            = '';
     public $user          = '';
     public $password      = '';
     public $site          = 'default';
@@ -1542,22 +1541,22 @@ class UniFi extends IPSModule {
      */
     private function exec_curl($url, $data = '')
     {
-        $ch = $this->get_curl_obj();
-        curl_setopt($ch, CURLOPT_URL, $url);
+        $this->$ch = $this->get_curl_obj();
+        curl_setopt($this->$ch, CURLOPT_URL, $url);
 
         if (trim($data) != '') {
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+            curl_setopt($this->$ch, CURLOPT_POSTFIELDS, $data);
             if ($this->request_type === 'PUT') {
-                curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json','Content-Length: '.strlen($data)]);
-                curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT');
+                curl_setopt($this->$ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json','Content-Length: '.strlen($data)]);
+                curl_setopt($this->$ch, CURLOPT_CUSTOMREQUEST, 'PUT');
             } else {
-                curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+                curl_setopt($this->$ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
             }
 
         } else {
-            curl_setopt($ch, CURLOPT_POST, false);
+            curl_setopt($this->$ch, CURLOPT_POST, false);
             if ($this->request_type === 'DELETE') {
-                curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'DELETE');
+                curl_setopt($this->$ch, CURLOPT_CUSTOMREQUEST, 'DELETE');
             }
         }
 
@@ -1587,22 +1586,22 @@ class UniFi extends IPSModule {
      */
     private function get_curl_obj()
     {
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $this->$ch = curl_init();
+        curl_setopt($this->$ch, CURLOPT_POST, true);
+        curl_setopt($this->$ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($this->$ch, CURLOPT_SSL_VERIFYHOST, false);
+        curl_setopt($this->$ch, CURLOPT_RETURNTRANSFER, true);
 
         if ($this->debug) {
-            curl_setopt($ch, CURLOPT_VERBOSE, true);
+            curl_setopt($this->$ch, CURLOPT_VERBOSE, true);
         }
 
         if ($this->cookies != '') {
-            curl_setopt($ch, CURLOPT_COOKIESESSION, true);
-            curl_setopt($ch, CURLOPT_COOKIE, $this->cookies);
+            curl_setopt($this->$ch, CURLOPT_COOKIESESSION, true);
+            curl_setopt($this->$ch, CURLOPT_COOKIE, $this->cookies);
         }
 
-        return $ch;
+        return $this->$ch;
     }
 
     private function GetClients() {

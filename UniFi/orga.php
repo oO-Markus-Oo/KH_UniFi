@@ -7,7 +7,7 @@ if (!function_exists('CreateCategoryByNameIdent')) {
         if ($Ident <> '') {
             $Catid = IPS_GetObjectIDByIdent($Ident, $ParentID);
         }
-        if ($Ident == '') {
+        if (($Ident == '') OR ($Catid === false)) {
             $Catid = IPS_GetCategoryIDByName($name, $ParentID);
         }
 

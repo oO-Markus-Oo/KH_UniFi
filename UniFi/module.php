@@ -1712,7 +1712,7 @@ class UniFi extends IPSModule {
                 return;
             }
         }
-        $VarID = IPS_GetObjectIDByName($Name, $ParentID);
+        $VarID = @IPS_GetObjectIDByName($Name, $ParentID);
         if (false !== $VarID) { // exists?
             $Obj = IPS_GetObject($VarID);
             if (2 == $Obj['ObjectType']) { // is variable?
@@ -1733,7 +1733,8 @@ class UniFi extends IPSModule {
     }
     
     private function GetWLANnetworks($instance_WLAN_ID) {
-        $wlanList = $this->GetWLANConfig();
+        #$wlanList = $this->GetWLANConfig();
+        $wlanList = $this->list_wlanconf();
 
         foreach ($wlanList->data as $wlan) {
             $ident = $wlan->_id;

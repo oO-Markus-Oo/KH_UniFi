@@ -19,35 +19,6 @@ class UniFi extends IPSModule {
         $this->RegisterPropertyInteger("Intervall", 0);
     }
 
-    public function ApplyChanges() {
-        //Never delete this line!
-        parent::ApplyChanges();
-
-        $this->baseURL = $this->ReadPropertyString("IPAddress");
-        $this->userName = $this->ReadPropertyString("UserName");
-        $this->userPassword = $this->ReadPropertyString("UserPassword");
-        $this->checkInterval = $this->ReadPropertyInteger("Intervall");
-
-        $this->RegisterVariableString("ClientHTMLBox", "ClientHTMLBox", "~HTMLBox");
-        
-        # create neccessary folders
-        $instance_id_parent = $this->InstanceID;
-        $instance_Clients_ID = $this->CreateCategoryByIdent($instance_id_parent, "Clients", "Clients");
-        $instance_WLAN_ID    = $this->CreateCategoryByIdent($instance_id_parent, "WLAN", "WLAN");
-
-        GetWLANnetworks($instance_WLAN_ID);
-        #$updateClientsScript = file_get_contents(__DIR__ . "/createClientList.php");
-        #$updateClientsScriptID = $this->RegisterScript("updateClients", "updateClients", $updateClientsScript);
-        #IPS_SetScriptTimer($updateClientsScriptID, $this->checkInterval);
-
-        #$updateWLANScript = file_get_contents(__DIR__ . "/createWLANList.php");
-        #$updateWLANScriptID = $this->RegisterScript("updateWLAN", "updateWLAN", $updateWLANScript);
-        #IPS_SetScriptTimer($updateWLANScriptID, $this->checkInterval);
-
-        #$setWLANScript = file_get_contents(__DIR__ . "/setWLAN.php");
-        #$this->RegisterScript("setWLAN", "setWLAN", $setWLANScript);
-    }
-
     private function Login() {
         $this->baseURL = $this->ReadPropertyString("IPAddress");
         $this->userName = $this->ReadPropertyString("UserName");
@@ -85,7 +56,7 @@ class UniFi extends IPSModule {
         curl_close($this->ch);
     }
 
-    public function GetClients() {
+    private function GetClients() {
         $this->Login();
 
         $url = $this->baseURL . "/api/s/default/stat/sta";
@@ -104,7 +75,7 @@ class UniFi extends IPSModule {
         }
     }
 
-    public function GetWLANConfig() {
+    private function GetWLANConfig() {
         $this->Login();
 
         $url = $this->baseURL . "/api/s/default/list/wlanconf";
@@ -122,7 +93,7 @@ class UniFi extends IPSModule {
         }
     }
 
-    public function SetWLANConfig($groupID, $config) {
+    private function SetWLANConfig($groupID, $config) {
         $this->Login();
 
         $url = $this->baseURL . "/api/s/default/upd/wlanconf/" . $groupID;
@@ -134,7 +105,7 @@ class UniFi extends IPSModule {
         $this->Logout();
     }
 
-    function CreateCategoryByNameIdent($name, $Ident = '', $ParentID = 0, $pos = 0, $hidden = false) {
+    private function CreateCategoryByNameIdent($name, $Ident = '', $ParentID = 0, $pos = 0, $hidden = false) {
         global $_IPS;
         if ($Ident <> '') {
             $Catid = @IPS_GetObjectIDByIdent($Ident, $ParentID);
@@ -192,7 +163,7 @@ class UniFi extends IPSModule {
         return $cid;
     }
     
-    function SetVariable($VarID, $Type, $Value) {
+    private function SetVariable($VarID, $Type, $Value) {
         switch ($Type) {
             case 0: // boolean
                 SetValueBoolean($VarID, $Value);
@@ -209,7 +180,7 @@ class UniFi extends IPSModule {
         }
     }
 
-    function CreateVariable($Name, $Type, $Value, $Ident = '', $ParentID = 0) {
+    private function CreateVariable($Name, $Type, $Value, $Ident = '', $ParentID = 0) {
         //echo "CreateVariable: ( $Name, $Type, $Value, $Ident, $ParentID ) \n";
         if ('' != $Ident) {
             $VarID = IPS_GetObjectIDByIdent($Ident, $ParentID);
@@ -238,7 +209,7 @@ class UniFi extends IPSModule {
         SetVariable($VarID, $Type, $Value);
     }
     
-    public function GetWLANnetworks($instance_WLAN_ID) {
+    private function GetWLANnetworks($instance_WLAN_ID) {
         $parentID = IPS_GetParent($_IPS["SELF"]);
         $wlanList = GetWLANConfig();
 
@@ -255,6 +226,35 @@ class UniFi extends IPSModule {
             #CreateVariable("Security", 3, $wlan->security, $ident . "_security", $catID);
         }
     }
+
+    public function ApplyChanges() {
+        //Never delete this line!
+        parent::ApplyChanges();
+
+        $this->baseURL = $this->ReadPropertyString("IPAddress");
+        $this->userName = $this->ReadPropertyString("UserName");
+        $this->userPassword = $this->ReadPropertyString("UserPassword");
+        $this->checkInterval = $this->ReadPropertyInteger("Intervall");
+
+        $this->RegisterVariableString("ClientHTMLBox", "ClientHTMLBox", "~HTMLBox");
+        
+        # create neccessary folders
+        $instance_id_parent = $this->InstanceID;
+        $instance_Clients_ID = $this->CreateCategoryByIdent($instance_id_parent, "Clients", "Clients");
+        $instance_WLAN_ID    = $this->CreateCategoryByIdent($instance_id_parent, "WLAN", "WLAN");
+
+        GetWLANnetworks($instance_WLAN_ID);
+        #$updateClientsScript = file_get_contents(__DIR__ . "/createClientList.php");
+        #$updateClientsScriptID = $this->RegisterScript("updateClients", "updateClients", $updateClientsScript);
+        #IPS_SetScriptTimer($updateClientsScriptID, $this->checkInterval);
+
+        #$updateWLANScript = file_get_contents(__DIR__ . "/createWLANList.php");
+        #$updateWLANScriptID = $this->RegisterScript("updateWLAN", "updateWLAN", $updateWLANScript);
+        #IPS_SetScriptTimer($updateWLANScriptID, $this->checkInterval);
+
+        #$setWLANScript = file_get_contents(__DIR__ . "/setWLAN.php");
+        #$this->RegisterScript("setWLAN", "setWLAN", $setWLANScript);
+    }    
 }
 
 ?>

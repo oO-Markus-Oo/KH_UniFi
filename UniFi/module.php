@@ -2,9 +2,25 @@
 class UniFi extends IPSModule {
 
     var $ch;
-    var $baseURL;
-    var $userName;
-    var $userPassword;
+
+    /**
+     * public properties
+     */
+    public $user          = '';
+    public $password      = '';
+    public $site          = 'default';
+    public $baseurl       = 'https://127.0.0.1:8443';
+    public $version       = '5.4.16';
+
+    /**
+     * private properties
+     */
+    private $debug        = false;
+    private $is_loggedin  = false;
+    private $cookies      = '';
+    private $request_type = 'POST';
+    private $last_results_raw;
+    private $last_error_message;    
 
     public function Create() {
         //Never delete this line!
@@ -17,6 +33,7 @@ class UniFi extends IPSModule {
         $this->RegisterPropertyString("UserPassword", "");
         $this->RegisterPropertyString("Clients", "");
         $this->RegisterPropertyInteger("Intervall", 0);
+        $this->RegisterPropertyBoolean("Debug", FALSE);
     }
 
      /**
@@ -1763,6 +1780,7 @@ class UniFi extends IPSModule {
         $this->site = "Default";
         $this->version = '5.4.16';
         $this->checkInterval = $this->ReadPropertyInteger("Intervall");
+        $this->debug = $this->ReadPropertyBoolean("Debug");
 
         $this->RegisterVariableString("ClientHTMLBox", "ClientHTMLBox", "~HTMLBox");
         

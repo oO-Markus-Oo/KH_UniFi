@@ -29,17 +29,22 @@ class UniFi extends IPSModule {
         $this->checkInterval = $this->ReadPropertyInteger("Intervall");
 
         $this->RegisterVariableString("ClientHTMLBox", "ClientHTMLBox", "~HTMLBox");
+        
+        # create neccessary folders
+        $instance_id_parent = $this->InstanceID;
+        $instance_Clients_ID = $this->CreateCategoryByIdent($instance_id_parent, "Clients", "Clients");
+        $instance_WLAN_ID    = $this->CreateCategoryByIdent($instance_id_parent, "WLAN", "WLAN");
 
-        $updateClientsScript = file_get_contents(__DIR__ . "/createClientList.php");
-        $updateClientsScriptID = $this->RegisterScript("updateClients", "updateClients", $updateClientsScript);
-        IPS_SetScriptTimer($updateClientsScriptID, $this->checkInterval);
+        #$updateClientsScript = file_get_contents(__DIR__ . "/createClientList.php");
+        #$updateClientsScriptID = $this->RegisterScript("updateClients", "updateClients", $updateClientsScript);
+        #IPS_SetScriptTimer($updateClientsScriptID, $this->checkInterval);
 
-        $updateWLANScript = file_get_contents(__DIR__ . "/createWLANList.php");
-        $updateWLANScriptID = $this->RegisterScript("updateWLAN", "updateWLAN", $updateWLANScript);
-        IPS_SetScriptTimer($updateWLANScriptID, $this->checkInterval);
+        #$updateWLANScript = file_get_contents(__DIR__ . "/createWLANList.php");
+        #$updateWLANScriptID = $this->RegisterScript("updateWLAN", "updateWLAN", $updateWLANScript);
+        #IPS_SetScriptTimer($updateWLANScriptID, $this->checkInterval);
 
-        $setWLANScript = file_get_contents(__DIR__ . "/setWLAN.php");
-        $this->RegisterScript("setWLAN", "setWLAN", $setWLANScript);
+        #$setWLANScript = file_get_contents(__DIR__ . "/setWLAN.php");
+        #$this->RegisterScript("setWLAN", "setWLAN", $setWLANScript);
     }
 
     private function Login() {
@@ -128,6 +133,109 @@ class UniFi extends IPSModule {
         $this->Logout();
     }
 
+    function CreateCategoryByNameIdent($name, $Ident = '', $ParentID = 0, $pos = 0, $hidden = false) {
+        global $_IPS;
+        if ($Ident <> '') {
+            $Catid = @IPS_GetObjectIDByIdent($Ident, $ParentID);
+        }
+        if (($Ident === '') OR ($Catid === false) OR ($Catid === '')) {
+            $Catid = @IPS_GetCategoryIDByName($name, $ParentID);
+        }
+
+        if ($Catid === false) {
+            $Catid = IPS_CreateCategory();
+            IPS_SetParent($Catid, $ParentID);
+            IPS_SetName($Catid, $name);
+            IPS_SetPosition($Catid, $pos);
+            IPS_SetHidden($Catid, $hidden);
+            IPS_SetInfo($Catid, "This category was created by: #" . $_IPS['SELF'] . "#");
+        }
+        return $Catid;
+    }
+
+    private function maskUmlaute($text)
+    {
+        $text = str_replace ("ä", "a", $text);
+        $text = str_replace ("Ä", "AE", $text);
+        $text = str_replace ("ö", "oe", $text);
+        $text = str_replace ("Ö", "OE", $text);
+        $text = str_replace ("ü", "ue", $text);
+        $text = str_replace ("Ü", "UE", $text);
+        $text = str_replace ("ß", "ss", $text);
+        $text = str_replace (" ", "_", $text);
+        $text = str_replace ("(", "_", $text);
+        $text = str_replace (")", "_", $text);
+        $text = str_replace ("&", "_", $text);
+        $text = str_replace ("§", "_", $text);
+        $text = str_replace ("/", "_", $text);
+        $text = str_replace ("=", "_", $text);
+        $text = str_replace ("{", "_", $text);
+        $text = str_replace ("}", "_", $text);
+        $text = str_replace (":", "_", $text);
+        $text = str_replace (",", "_", $text);
+        $text = str_replace (";", "_", $text);
+     
+        return $text;
+    }
+    
+    private function CreateCategoryByIdent($id, $ident, $name)
+    {
+        $cid = @IPS_GetObjectIDByIdent($this->maskUmlaute($ident), $id);
+        if($cid === false)
+        {
+             $cid = IPS_CreateCategory();
+             IPS_SetParent($cid, $id);
+             IPS_SetName($cid, $name);
+             IPS_SetIdent($cid, $this->maskUmlaute($ident));
+        }
+        return $cid;
+    }
+    
+    function SetVariable($VarID, $Type, $Value) {
+        switch ($Type) {
+            case 0: // boolean
+                SetValueBoolean($VarID, $Value);
+                break;
+            case 1: // integer
+                SetValueInteger($VarID, $Value);
+                break;
+            case 2: // float
+                SetValueFloat($VarID, $Value);
+                break;
+            case 3: // string
+                SetValueString($VarID, $Value);
+                break;
+        }
+    }
+
+    function CreateVariable($Name, $Type, $Value, $Ident = '', $ParentID = 0) {
+        //echo "CreateVariable: ( $Name, $Type, $Value, $Ident, $ParentID ) \n";
+        if ('' != $Ident) {
+            $VarID = IPS_GetObjectIDByIdent($Ident, $ParentID);
+            if (false !== $VarID) {
+                SetVariable($VarID, $Type, $Value);
+                return;
+            }
+        }
+        $VarID = IPS_GetObjectIDByName($Name, $ParentID);
+        if (false !== $VarID) { // exists?
+            $Obj = IPS_GetObject($VarID);
+            if (2 == $Obj['ObjectType']) { // is variable?
+                $Var = IPS_GetVariable($VarID);
+                if ($Type == $Var['VariableValue']['ValueType']) {
+                    SetVariable($VarID, $Type, $Value);
+                    return;
+                }
+            }
+        }
+        $VarID = IPS_CreateVariable($Type);
+        IPS_SetParent($VarID, $ParentID);
+        IPS_SetName($VarID, $Name);
+        if ('' != $Ident) {
+            IPS_SetIdent($VarID, $Ident);
+        }
+        SetVariable($VarID, $Type, $Value);
+    }
 }
 
 ?>

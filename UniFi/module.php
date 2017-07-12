@@ -185,7 +185,7 @@ class UniFi extends IPSModule {
         if ('' != $Ident) {
             $VarID = IPS_GetObjectIDByIdent($Ident, $ParentID);
             if (false !== $VarID) {
-                SetVariable($VarID, $Type, $Value);
+                $this->SetVariable($VarID, $Type, $Value);
                 return;
             }
         }
@@ -195,7 +195,7 @@ class UniFi extends IPSModule {
             if (2 == $Obj['ObjectType']) { // is variable?
                 $Var = IPS_GetVariable($VarID);
                 if ($Type == $Var['VariableValue']['ValueType']) {
-                    SetVariable($VarID, $Type, $Value);
+                    $this->SetVariable($VarID, $Type, $Value);
                     return;
                 }
             }
@@ -206,7 +206,7 @@ class UniFi extends IPSModule {
         if ('' != $Ident) {
             IPS_SetIdent($VarID, $Ident);
         }
-        SetVariable($VarID, $Type, $Value);
+        $this->SetVariable($VarID, $Type, $Value);
     }
     
     private function GetWLANnetworks($instance_WLAN_ID) {

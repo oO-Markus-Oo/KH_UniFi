@@ -26,7 +26,7 @@ class UniFi extends IPSModule {
         $this->baseURL = $this->ReadPropertyString("IPAddress");
         $this->userName = $this->ReadPropertyString("UserName");
         $this->userPassword = $this->ReadPropertyString("UserPassword");
-        $this->checkInterval = $this->ReadPropertyString("Intervall");
+        $this->checkInterval = $this->ReadPropertyInteger("Intervall");
 
         $this->RegisterVariableString("ClientHTMLBox", "ClientHTMLBox", "~HTMLBox");
 

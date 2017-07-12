@@ -243,7 +243,7 @@ class UniFi extends IPSModule {
         $instance_Clients_ID = $this->CreateCategoryByIdent($instance_id_parent, "Clients", "Clients");
         $instance_WLAN_ID    = $this->CreateCategoryByIdent($instance_id_parent, "WLAN", "WLAN");
 
-        GetWLANnetworks($instance_WLAN_ID);
+        $this->GetWLANnetworks($instance_WLAN_ID);
         #$updateClientsScript = file_get_contents(__DIR__ . "/createClientList.php");
         #$updateClientsScriptID = $this->RegisterScript("updateClients", "updateClients", $updateClientsScript);
         #IPS_SetScriptTimer($updateClientsScriptID, $this->checkInterval);

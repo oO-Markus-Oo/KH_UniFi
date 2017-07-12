@@ -33,7 +33,7 @@ class UniFi extends IPSModule {
         $this->RegisterPropertyString("Clients", "");
         $this->RegisterPropertyInteger("Intervall", 0);
         $this->RegisterPropertyBoolean("Debug", FALSE);
-        $this->RegisterTimer("Interval", 0, 'UniFi_UpdateModuleData();');
+        $this->RegisterTimer("Interval", 0, 'UniFi_UpdateUniFiModuleData();');
     }
 
      /**
@@ -1790,7 +1790,7 @@ class UniFi extends IPSModule {
         #$this->RegisterScript("setWLAN", "setWLAN", $setWLANScript);
     } 
     
-    public function UpdateModuleData() {
+    public function UpdateUniFiModuleData() {
         $this->baseURL = $this->ReadPropertyString("IPAddress");
         $this->user = $this->ReadPropertyString("UserName");
         $this->password = $this->ReadPropertyString("UserPassword");

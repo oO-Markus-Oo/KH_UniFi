@@ -33,6 +33,7 @@ class UniFi extends IPSModule {
         $this->RegisterPropertyString("Clients", "");
         $this->RegisterPropertyInteger("Intervall", 0);
         $this->RegisterPropertyBoolean("Debug", FALSE);
+        $this->RegisterTimer("Messzyklus", 0, 'UniFi_ApplyChanges();');
     }
 
      /**
@@ -1730,6 +1731,18 @@ class UniFi extends IPSModule {
             IPS_SetIdent($VarID, $Ident);
         }
         $this->SetVariable($VarID, $Type, $Value);
+    }
+
+    private function GetWLANclients() {
+        $wlanClients = $this->GetWLANConfig();
+        
+        foreach ($wlanList->data as $wlan) {
+            $ident = $wlan->_id;
+            $catID = $this->CreateCategoryByNameIdent($wlan->name, $ident, $instance_WLAN_ID);
+            $this->CreateVariable("ID", 3, $wlan->_id, $ident . "_id", $catID);
+            $this->CreateVariable("Enabled", 0, $wlan->enabled, $ident . "_enabled", $catID);
+            $this->CreateVariable("Security", 3, $wlan->security, $ident . "_security", $catID);
+        }
     }
     
     private function GetWLANnetworks($instance_WLAN_ID) {

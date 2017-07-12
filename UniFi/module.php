@@ -33,7 +33,7 @@ class UniFi extends IPSModule {
         $this->RegisterPropertyString("Clients", "");
         $this->RegisterPropertyInteger("Intervall", 0);
         $this->RegisterPropertyBoolean("Debug", FALSE);
-        $this->RegisterTimer("Messzyklus", 0, 'UniFi_ApplyChanges();');
+        $this->RegisterTimer("Interval", 0, 'UniFi_ApplyChanges();');
     }
 
      /**
@@ -1770,6 +1770,7 @@ class UniFi extends IPSModule {
         $this->debug = $this->ReadPropertyBoolean("Debug");
 
         $this->RegisterVariableString("ClientHTMLBox", "ClientHTMLBox", "~HTMLBox");
+        $this->SetTimerInterval("Interval", ($this->ReadPropertyInteger("Intervall") * 1000));
         
         # create neccessary folders
         $instance_id_parent = $this->InstanceID;

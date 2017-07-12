@@ -44,8 +44,8 @@ class UniFi extends IPSModule {
         $ch = $this->get_curl_obj();
 
         curl_setopt($ch, CURLOPT_HEADER, 1);
-        curl_setopt($ch, CURLOPT_REFERER, $this->baseurl.'/login');
-        curl_setopt($ch, CURLOPT_URL, $this->baseurl.'/api/login');
+        curl_setopt($ch, CURLOPT_REFERER, $this->baseURL.'/login');
+        curl_setopt($ch, CURLOPT_URL, $this->baseURL.'/api/login');
         curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode(['username' => $this->user, 'password' => $this->password]));
 
         if (($content = curl_exec($ch)) === false) {
@@ -96,7 +96,7 @@ class UniFi extends IPSModule {
     public function logout()
     {
         if (!$this->is_loggedin) return false;
-        $this->exec_curl($this->baseurl.'/logout');
+        $this->exec_curl($this->baseURL.'/logout');
         $this->is_loggedin = false;
         $this->cookies     = '';
         return true;
@@ -188,7 +188,7 @@ class UniFi extends IPSModule {
         if (isset($MBytes)) $json['bytes']  = $MBytes;
         if (isset($ap_mac)) $json['ap_mac'] = $ap_mac;
         $json            = json_encode($json);
-        $content_decoded = json_decode($this->exec_curl($this->baseurl.'/api/s/'.$this->site.'/cmd/stamgr', 'json='.$json));
+        $content_decoded = json_decode($this->exec_curl($this->baseURL.'/api/s/'.$this->site.'/cmd/stamgr', 'json='.$json));
         return $this->process_response_boolean($content_decoded);
     }
 
@@ -203,7 +203,7 @@ class UniFi extends IPSModule {
         if (!$this->is_loggedin) return false;
         $mac             = strtolower($mac);
         $json            = json_encode(['cmd' => 'unauthorize-guest', 'mac' => $mac]);
-        $content_decoded = json_decode($this->exec_curl($this->baseurl.'/api/s/'.$this->site.'/cmd/stamgr', 'json='.$json));
+        $content_decoded = json_decode($this->exec_curl($this->baseURL.'/api/s/'.$this->site.'/cmd/stamgr', 'json='.$json));
         return $this->process_response_boolean($content_decoded);
      }
 
@@ -218,7 +218,7 @@ class UniFi extends IPSModule {
         if (!$this->is_loggedin) return false;
         $mac             = strtolower($mac);
         $json            = json_encode(['cmd' => 'kick-sta', 'mac' => $mac]);
-        $content_decoded = json_decode($this->exec_curl($this->baseurl.'/api/s/'.$this->site.'/cmd/stamgr', 'json='.$json));
+        $content_decoded = json_decode($this->exec_curl($this->baseURL.'/api/s/'.$this->site.'/cmd/stamgr', 'json='.$json));
         return $this->process_response_boolean($content_decoded);
     }
 
@@ -235,7 +235,7 @@ class UniFi extends IPSModule {
         }
         $mac             = strtolower($mac);
         $json            = json_encode(['cmd' => 'block-sta', 'mac' => $mac]);
-        $content_decoded = json_decode($this->exec_curl($this->baseurl.'/api/s/'.$this->site.'/cmd/stamgr', 'json='.$json));
+        $content_decoded = json_decode($this->exec_curl($this->baseURL.'/api/s/'.$this->site.'/cmd/stamgr', 'json='.$json));
         return $this->process_response_boolean($content_decoded);
     }
 
@@ -250,7 +250,7 @@ class UniFi extends IPSModule {
         if (!$this->is_loggedin) return false;
         $mac             = strtolower($mac);
         $json            = json_encode(['cmd' => 'unblock-sta', 'mac' => $mac]);
-        $content_decoded = json_decode($this->exec_curl($this->baseurl.'/api/s/'.$this->site.'/cmd/stamgr', 'json='.$json));
+        $content_decoded = json_decode($this->exec_curl($this->baseURL.'/api/s/'.$this->site.'/cmd/stamgr', 'json='.$json));
         return $this->process_response_boolean($content_decoded);
     }
 
@@ -269,7 +269,7 @@ class UniFi extends IPSModule {
         if (!$this->is_loggedin) return false;
         $noted           = (is_null($note)) || (empty($note)) ? false : true;
         $json            = json_encode(['note' => $note, 'noted' => $noted]);
-        $content_decoded = json_decode($this->exec_curl($this->baseurl.'/api/s/'.$this->site.'/upd/user/'.trim($user_id), 'json='.$json));
+        $content_decoded = json_decode($this->exec_curl($this->baseURL.'/api/s/'.$this->site.'/upd/user/'.trim($user_id), 'json='.$json));
         return $this->process_response_boolean($content_decoded);
     }
 
@@ -287,7 +287,7 @@ class UniFi extends IPSModule {
     {
         if (!$this->is_loggedin) return false;
         $json            = json_encode(['name' => $name]);
-        $content_decoded = json_decode($this->exec_curl($this->baseurl.'/api/s/'.$this->site.'/upd/user/'.trim($user_id), 'json='.$json));
+        $content_decoded = json_decode($this->exec_curl($this->baseURL.'/api/s/'.$this->site.'/upd/user/'.trim($user_id), 'json='.$json));
         return $this->process_response_boolean($content_decoded);
     }
 
@@ -309,7 +309,7 @@ class UniFi extends IPSModule {
         $start           = is_null($start) ? $end-(52*7*24*3600*1000) : $start;
         $attributes      = ['bytes', 'wan-tx_bytes', 'wan-rx_bytes', 'wlan_bytes', 'num_sta', 'lan-num_sta', 'wlan-num_sta', 'time'];
         $json            = json_encode(['attrs' => $attributes, 'start' => $start, 'end' => $end]);
-        $content_decoded = json_decode($this->exec_curl($this->baseurl.'/api/s/'.$this->site.'/stat/report/daily.site', 'json='.$json));
+        $content_decoded = json_decode($this->exec_curl($this->baseURL.'/api/s/'.$this->site.'/stat/report/daily.site', 'json='.$json));
         return $this->process_response($content_decoded);
     }
 
@@ -331,7 +331,7 @@ class UniFi extends IPSModule {
         $start           = is_null($start) ? $end-(7*24*3600*1000) : $start;
         $attributes      = ['bytes', 'wan-tx_bytes', 'wan-rx_bytes', 'wlan_bytes', 'num_sta', 'lan-num_sta', 'wlan-num_sta', 'time'];
         $json            = json_encode(['attrs' => $attributes, 'start' => $start, 'end' => $end]);
-        $content_decoded = json_decode($this->exec_curl($this->baseurl.'/api/s/'.$this->site.'/stat/report/hourly.site', 'json='.$json));
+        $content_decoded = json_decode($this->exec_curl($this->baseURL.'/api/s/'.$this->site.'/stat/report/hourly.site', 'json='.$json));
         return $this->process_response($content_decoded);
     }
 
@@ -352,7 +352,7 @@ class UniFi extends IPSModule {
         $end             = is_null($end) ? ((time())*1000) : $end;
         $start           = is_null($start) ? $end-(7*24*3600*1000) : $start;
         $json            = json_encode(['attrs' => ['bytes', 'num_sta', 'time'], 'start' => $start, 'end' => $end]);
-        $content_decoded = json_decode($this->exec_curl($this->baseurl.'/api/s/'.$this->site.'/stat/report/hourly.ap', 'json='.$json));
+        $content_decoded = json_decode($this->exec_curl($this->baseURL.'/api/s/'.$this->site.'/stat/report/hourly.ap', 'json='.$json));
         return $this->process_response($content_decoded);
     }
 
@@ -373,7 +373,7 @@ class UniFi extends IPSModule {
         $end             = is_null($end) ? ((time())*1000) : $end;
         $start           = is_null($start) ? $end-(7*24*3600*1000) : $start;
         $json            = json_encode(['attrs' => ['bytes', 'num_sta', 'time'], 'start' => $start, 'end' => $end]);
-        $content_decoded = json_decode($this->exec_curl($this->baseurl.'/api/s/'.$this->site.'/stat/report/daily.ap', 'json='.$json));
+        $content_decoded = json_decode($this->exec_curl($this->baseURL.'/api/s/'.$this->site.'/stat/report/daily.ap', 'json='.$json));
         return $this->process_response($content_decoded);
     }
 
@@ -396,7 +396,7 @@ class UniFi extends IPSModule {
         $json            = ['type'=> 'all', 'start' => $start, 'end' => $end];
         if (!is_null($mac)) $json['mac'] = $mac;
         $json            = json_encode($json);
-        $content_decoded = json_decode($this->exec_curl($this->baseurl.'/api/s/'.$this->site.'/stat/session', 'json='.$json));
+        $content_decoded = json_decode($this->exec_curl($this->baseURL.'/api/s/'.$this->site.'/stat/session', 'json='.$json));
         return $this->process_response($content_decoded);
     }
 
@@ -412,7 +412,7 @@ class UniFi extends IPSModule {
         if (!$this->is_loggedin) return false;
         $limit           = is_null($limit) ? 5 : $limit;
         $json            = json_encode(['mac' => $mac, '_limit' => $limit, '_sort'=> '-assoc_time']);
-        $content_decoded = json_decode($this->exec_curl($this->baseurl.'/api/s/'.$this->site.'/stat/session', 'json='.$json));
+        $content_decoded = json_decode($this->exec_curl($this->baseURL.'/api/s/'.$this->site.'/stat/session', 'json='.$json));
         return $this->process_response($content_decoded);
     }
 
@@ -432,7 +432,7 @@ class UniFi extends IPSModule {
         $end             = is_null($end) ? time() : $end;
         $start           = is_null($start) ? $end-(7*24*3600) : $start;
         $json            = json_encode(['start' => $start, 'end' => $end]);
-        $content_decoded = json_decode($this->exec_curl($this->baseurl.'/api/s/'.$this->site.'/stat/authorization', 'json='.$json));
+        $content_decoded = json_decode($this->exec_curl($this->baseURL.'/api/s/'.$this->site.'/stat/authorization', 'json='.$json));
         return $this->process_response($content_decoded);
     }
 
@@ -450,7 +450,7 @@ class UniFi extends IPSModule {
     {
         if (!$this->is_loggedin) return false;
         $json            = json_encode(['type' => 'all', 'conn' => 'all', 'within' => $historyhours]);
-        $content_decoded = json_decode($this->exec_curl($this->baseurl.'/api/s/'.$this->site.'/stat/alluser', 'json='.$json));
+        $content_decoded = json_decode($this->exec_curl($this->baseURL.'/api/s/'.$this->site.'/stat/alluser', 'json='.$json));
         return $this->process_response($content_decoded);
     }
 
@@ -464,7 +464,7 @@ class UniFi extends IPSModule {
     {
         if (!$this->is_loggedin) return false;
         $json            = json_encode(['within' => $within]);
-        $content_decoded = json_decode($this->exec_curl($this->baseurl.'/api/s/'.$this->site.'/stat/guest', 'json='.$json));
+        $content_decoded = json_decode($this->exec_curl($this->baseURL.'/api/s/'.$this->site.'/stat/guest', 'json='.$json));
         return $this->process_response($content_decoded);
     }
 
@@ -477,7 +477,7 @@ class UniFi extends IPSModule {
     public function list_clients($client_mac = null)
     {
         if (!$this->is_loggedin) return false;
-        $content_decoded = json_decode($this->exec_curl($this->baseurl.'/api/s/'.$this->site.'/stat/sta/'.trim($client_mac)));
+        $content_decoded = json_decode($this->exec_curl($this->baseURL.'/api/s/'.$this->site.'/stat/sta/'.trim($client_mac)));
         return $this->process_response($content_decoded);
     }
 
@@ -490,7 +490,7 @@ class UniFi extends IPSModule {
     public function stat_client($client_mac)
     {
         if (!$this->is_loggedin) return false;
-	    $content_decoded = json_decode($this->exec_curl($this->baseurl.'/api/s/'.$this->site.'/stat/user/'.trim($client_mac)));
+	    $content_decoded = json_decode($this->exec_curl($this->baseURL.'/api/s/'.$this->site.'/stat/user/'.trim($client_mac)));
         return $this->process_response($content_decoded);
     }
 
@@ -502,7 +502,7 @@ class UniFi extends IPSModule {
     public function list_usergroups()
     {
         if (!$this->is_loggedin) return false;
-        $content_decoded = json_decode($this->exec_curl($this->baseurl.'/api/s/'.$this->site.'/list/usergroup'));
+        $content_decoded = json_decode($this->exec_curl($this->baseURL.'/api/s/'.$this->site.'/list/usergroup'));
         return $this->process_response($content_decoded);
     }
 
@@ -517,7 +517,7 @@ class UniFi extends IPSModule {
     {
         if (!$this->is_loggedin) return false;
         $json            = json_encode(['usergroup_id' => $group_id]);
-	    $content_decoded = json_decode($this->exec_curl($this->baseurl.'/api/s/'.$this->site.'/upd/user/'.trim($user_id), 'json='.$json));
+	    $content_decoded = json_decode($this->exec_curl($this->baseURL.'/api/s/'.$this->site.'/upd/user/'.trim($user_id), 'json='.$json));
         return $this->process_response_boolean($content_decoded);
     }
 
@@ -537,7 +537,7 @@ class UniFi extends IPSModule {
         if (!$this->is_loggedin) return false;
         $this->request_type = 'PUT';
         $json               = json_encode(['_id' => $group_id, 'name' => $group_name, 'qos_rate_max_down' => $group_dn, 'qos_rate_max_up' => $group_up, 'site_id' => $site_id]);
-        $content_decoded    = json_decode($this->exec_curl($this->baseurl.'/api/s/'.$this->site.'/rest/usergroup/'.trim($group_id), $json));
+        $content_decoded    = json_decode($this->exec_curl($this->baseURL.'/api/s/'.$this->site.'/rest/usergroup/'.trim($group_id), $json));
         return $this->process_response($content_decoded);
     }
 
@@ -553,7 +553,7 @@ class UniFi extends IPSModule {
     {
         if (!$this->is_loggedin) return false;
         $json               = json_encode(['name' => $group_name, 'qos_rate_max_down' => $group_dn, 'qos_rate_max_up' => $group_up]);
-        $content_decoded    = json_decode($this->exec_curl($this->baseurl.'/api/s/'.$this->site.'/rest/usergroup', $json));
+        $content_decoded    = json_decode($this->exec_curl($this->baseURL.'/api/s/'.$this->site.'/rest/usergroup', $json));
         return $this->process_response($content_decoded);
     }
 
@@ -567,7 +567,7 @@ class UniFi extends IPSModule {
     {
         if (!$this->is_loggedin) return false;
         $this->request_type = 'DELETE';
-        $content_decoded    = json_decode($this->exec_curl($this->baseurl.'/api/s/'.$this->site.'/rest/usergroup/'.trim($group_id)));
+        $content_decoded    = json_decode($this->exec_curl($this->baseURL.'/api/s/'.$this->site.'/rest/usergroup/'.trim($group_id)));
         return $this->process_response_boolean($content_decoded);
     }
 
@@ -579,7 +579,7 @@ class UniFi extends IPSModule {
     public function list_health()
     {
         if (!$this->is_loggedin) return false;
-        $content_decoded = json_decode($this->exec_curl($this->baseurl.'/api/s/'.$this->site.'/stat/health'));
+        $content_decoded = json_decode($this->exec_curl($this->baseURL.'/api/s/'.$this->site.'/stat/health'));
         return $this->process_response($content_decoded);
     }
 
@@ -591,7 +591,7 @@ class UniFi extends IPSModule {
     public function list_dashboard()
     {
         if (!$this->is_loggedin) return false;
-        $content_decoded = json_decode($this->exec_curl($this->baseurl.'/api/s/'.$this->site.'/stat/dashboard'));
+        $content_decoded = json_decode($this->exec_curl($this->baseURL.'/api/s/'.$this->site.'/stat/dashboard'));
         return $this->process_response($content_decoded);
     }
 
@@ -603,7 +603,7 @@ class UniFi extends IPSModule {
     public function list_users()
     {
         if (!$this->is_loggedin) return false;
-        $content_decoded = json_decode($this->exec_curl($this->baseurl.'/api/s/'.$this->site.'/list/user'));
+        $content_decoded = json_decode($this->exec_curl($this->baseURL.'/api/s/'.$this->site.'/list/user'));
         return $this->process_response($content_decoded);
     }
 
@@ -616,7 +616,7 @@ class UniFi extends IPSModule {
     public function list_devices($device_mac = null)
     {
         if (!$this->is_loggedin) return false;
-        $content_decoded = json_decode($this->exec_curl($this->baseurl.'/api/s/'.$this->site.'/stat/device/'.$device_mac));
+        $content_decoded = json_decode($this->exec_curl($this->baseURL.'/api/s/'.$this->site.'/stat/device/'.$device_mac));
         return $this->process_response($content_decoded);
     }
 
@@ -630,7 +630,7 @@ class UniFi extends IPSModule {
     {
         if (!$this->is_loggedin) return false;
         $json            = json_encode(['within' => $within]);
-        $content_decoded = json_decode($this->exec_curl($this->baseurl.'/api/s/'.$this->site.'/stat/rogueap', 'json='.$json));
+        $content_decoded = json_decode($this->exec_curl($this->baseURL.'/api/s/'.$this->site.'/stat/rogueap', 'json='.$json));
         return $this->process_response($content_decoded);
     }
 
@@ -642,7 +642,7 @@ class UniFi extends IPSModule {
     public function list_sites()
     {
         if (!$this->is_loggedin) return false;
-        $content_decoded = json_decode($this->exec_curl($this->baseurl.'/api/self/sites'));
+        $content_decoded = json_decode($this->exec_curl($this->baseURL.'/api/self/sites'));
         return $this->process_response($content_decoded);
     }
 
@@ -656,7 +656,7 @@ class UniFi extends IPSModule {
     public function stat_sites()
     {
         if (!$this->is_loggedin) return false;
-        $content_decoded = json_decode($this->exec_curl($this->baseurl.'/api/stat/sites'));
+        $content_decoded = json_decode($this->exec_curl($this->baseURL.'/api/stat/sites'));
         return $this->process_response($content_decoded);
     }
 
@@ -672,7 +672,7 @@ class UniFi extends IPSModule {
     {
         if (!$this->is_loggedin) return false;
         $json            = json_encode(['desc' => $description, 'cmd' => 'add-site']);
-        $content_decoded = json_decode($this->exec_curl($this->baseurl.'/api/s/'.$this->site.'/cmd/sitemgr', 'json='.$json));
+        $content_decoded = json_decode($this->exec_curl($this->baseURL.'/api/s/'.$this->site.'/cmd/sitemgr', 'json='.$json));
         return $this->process_response($content_decoded);
     }
 
@@ -686,7 +686,7 @@ class UniFi extends IPSModule {
     {
         if (!$this->is_loggedin) return false;
         $json            = json_encode(['site' => $site_id, 'cmd' => 'delete-site']);
-        $content_decoded = json_decode($this->exec_curl($this->baseurl.'/api/s/'.$this->site.'/cmd/sitemgr', 'json='.$json));
+        $content_decoded = json_decode($this->exec_curl($this->baseURL.'/api/s/'.$this->site.'/cmd/sitemgr', 'json='.$json));
         return $this->process_response_boolean($content_decoded);
     }
 
@@ -699,7 +699,7 @@ class UniFi extends IPSModule {
     {
         if (!$this->is_loggedin) return false;
         $json            = json_encode(['cmd' => 'get-admins']);
-        $content_decoded = json_decode($this->exec_curl($this->baseurl.'/api/s/'.$this->site.'/cmd/sitemgr', 'json='.$json));
+        $content_decoded = json_decode($this->exec_curl($this->baseURL.'/api/s/'.$this->site.'/cmd/sitemgr', 'json='.$json));
         return $this->process_response($content_decoded);
     }
 
@@ -711,7 +711,7 @@ class UniFi extends IPSModule {
     public function list_wlan_groups()
     {
         if (!$this->is_loggedin) return false;
-        $content_decoded = json_decode($this->exec_curl($this->baseurl.'/api/s/'.$this->site.'/list/wlangroup'));
+        $content_decoded = json_decode($this->exec_curl($this->baseURL.'/api/s/'.$this->site.'/list/wlangroup'));
         return $this->process_response($content_decoded);
     }
 
@@ -723,7 +723,7 @@ class UniFi extends IPSModule {
     public function stat_sysinfo()
     {
         if (!$this->is_loggedin) return false;
-        $content_decoded = json_decode($this->exec_curl($this->baseurl.'/api/s/'.$this->site.'/stat/sysinfo'));
+        $content_decoded = json_decode($this->exec_curl($this->baseURL.'/api/s/'.$this->site.'/stat/sysinfo'));
         return $this->process_response($content_decoded);
     }
 
@@ -735,7 +735,7 @@ class UniFi extends IPSModule {
     public function list_self()
     {
         if (!$this->is_loggedin) return false;
-        $content_decoded = json_decode($this->exec_curl($this->baseurl.'/api/s/'.$this->site.'/self'));
+        $content_decoded = json_decode($this->exec_curl($this->baseURL.'/api/s/'.$this->site.'/self'));
         return $this->process_response($content_decoded);
     }
 
@@ -747,7 +747,7 @@ class UniFi extends IPSModule {
     public function list_networkconf()
     {
         if (!$this->is_loggedin) return false;
-        $content_decoded = json_decode($this->exec_curl($this->baseurl.'/api/s/'.$this->site.'/list/networkconf'));
+        $content_decoded = json_decode($this->exec_curl($this->baseURL.'/api/s/'.$this->site.'/list/networkconf'));
         return $this->process_response($content_decoded);
     }
 
@@ -765,7 +765,7 @@ class UniFi extends IPSModule {
             $json = json_encode(['create_time' => $create_time]);
         }
 
-        $content_decoded = json_decode($this->exec_curl($this->baseurl.'/api/s/'.$this->site.'/stat/voucher', 'json='.$json));
+        $content_decoded = json_decode($this->exec_curl($this->baseURL.'/api/s/'.$this->site.'/stat/voucher', 'json='.$json));
         return $this->process_response($content_decoded);
     }
 
@@ -783,7 +783,7 @@ class UniFi extends IPSModule {
             $url_suffix = '?within='.$within;
         }
 
-        $content_decoded = json_decode($this->exec_curl($this->baseurl.'/api/s/'.$this->site.'/stat/payment'.$url_suffix));
+        $content_decoded = json_decode($this->exec_curl($this->baseURL.'/api/s/'.$this->site.'/stat/payment'.$url_suffix));
         return $this->process_response($content_decoded);
     }
 
@@ -805,7 +805,7 @@ class UniFi extends IPSModule {
          */
         if (isset($note)) $json['note'] = trim($note);
         $json            = json_encode($json);
-        $content_decoded = json_decode($this->exec_curl($this->baseurl.'/api/s/'.$this->site.'/rest/hotspotop', 'json='.$json));
+        $content_decoded = json_decode($this->exec_curl($this->baseURL.'/api/s/'.$this->site.'/rest/hotspotop', 'json='.$json));
         return $this->process_response_boolean($content_decoded);
     }
 
@@ -817,7 +817,7 @@ class UniFi extends IPSModule {
     public function list_hotspotop()
     {
         if (!$this->is_loggedin) return false;
-        $content_decoded = json_decode($this->exec_curl($this->baseurl.'/api/s/'.$this->site.'/list/hotspotop'));
+        $content_decoded = json_decode($this->exec_curl($this->baseURL.'/api/s/'.$this->site.'/list/hotspotop'));
         return $this->process_response($content_decoded);
     }
 
@@ -847,7 +847,7 @@ class UniFi extends IPSModule {
         if (isset($down))   $json['down'] = $down;
         if (isset($MBytes)) $json['bytes'] = $MBytes;
         $json            = json_encode($json);
-        $content_decoded = json_decode($this->exec_curl($this->baseurl.'/api/s/'.$this->site.'/cmd/hotspot', 'json='.$json));
+        $content_decoded = json_decode($this->exec_curl($this->baseURL.'/api/s/'.$this->site.'/cmd/hotspot', 'json='.$json));
         return $this->process_response($content_decoded);
     }
 
@@ -861,7 +861,7 @@ class UniFi extends IPSModule {
     {
         if (!$this->is_loggedin) return false;
         $json            = json_encode(['_id' => $voucher_id, 'cmd' => 'delete-voucher']);
-        $content_decoded = json_decode($this->exec_curl($this->baseurl.'/api/s/'.$this->site.'/cmd/hotspot', 'json='.$json));
+        $content_decoded = json_decode($this->exec_curl($this->baseURL.'/api/s/'.$this->site.'/cmd/hotspot', 'json='.$json));
         return $this->process_response_boolean($content_decoded);
     }
 
@@ -875,7 +875,7 @@ class UniFi extends IPSModule {
     {
         if (!$this->is_loggedin) return false;
         $json            = json_encode(['_id' => $guest_id, 'cmd' => 'extend']);
-        $content_decoded = json_decode($this->exec_curl($this->baseurl.'/api/s/'.$this->site.'/cmd/hotspot', 'json='.$json));
+        $content_decoded = json_decode($this->exec_curl($this->baseURL.'/api/s/'.$this->site.'/cmd/hotspot', 'json='.$json));
         return $this->process_response_boolean($content_decoded);
     }
 
@@ -887,7 +887,7 @@ class UniFi extends IPSModule {
     public function list_portforward_stats()
     {
         if (!$this->is_loggedin) return false;
-        $content_decoded = json_decode($this->exec_curl($this->baseurl.'/api/s/'.$this->site.'/stat/portforward'));
+        $content_decoded = json_decode($this->exec_curl($this->baseURL.'/api/s/'.$this->site.'/stat/portforward'));
         return $this->process_response($content_decoded);
     }
 
@@ -899,7 +899,7 @@ class UniFi extends IPSModule {
     public function list_dpi_stats()
     {
         if (!$this->is_loggedin) return false;
-        $content_decoded = json_decode($this->exec_curl($this->baseurl.'/api/s/'.$this->site.'/stat/dpi'));
+        $content_decoded = json_decode($this->exec_curl($this->baseURL.'/api/s/'.$this->site.'/stat/dpi'));
         return $this->process_response($content_decoded);
     }
 
@@ -911,7 +911,7 @@ class UniFi extends IPSModule {
     public function list_current_channels()
     {
         if (!$this->is_loggedin) return false;
-        $content_decoded = json_decode($this->exec_curl($this->baseurl.'/api/s/'.$this->site.'/stat/current-channel'));
+        $content_decoded = json_decode($this->exec_curl($this->baseURL.'/api/s/'.$this->site.'/stat/current-channel'));
         return $this->process_response($content_decoded);
     }
 
@@ -923,7 +923,7 @@ class UniFi extends IPSModule {
     public function list_portforwarding()
     {
         if (!$this->is_loggedin) return false;
-        $content_decoded = json_decode($this->exec_curl($this->baseurl.'/api/s/'.$this->site.'/list/portforward'));
+        $content_decoded = json_decode($this->exec_curl($this->baseURL.'/api/s/'.$this->site.'/list/portforward'));
         return $this->process_response($content_decoded);
     }
 
@@ -935,7 +935,7 @@ class UniFi extends IPSModule {
     public function list_dynamicdns()
     {
         if (!$this->is_loggedin) return false;
-        $content_decoded = json_decode($this->exec_curl($this->baseurl.'/api/s/'.$this->site.'/list/dynamicdns'));
+        $content_decoded = json_decode($this->exec_curl($this->baseURL.'/api/s/'.$this->site.'/list/dynamicdns'));
         return $this->process_response($content_decoded);
     }
 
@@ -947,7 +947,7 @@ class UniFi extends IPSModule {
     public function list_portconf()
     {
         if (!$this->is_loggedin) return false;
-        $content_decoded = json_decode($this->exec_curl($this->baseurl.'/api/s/'.$this->site.'/list/portconf'));
+        $content_decoded = json_decode($this->exec_curl($this->baseURL.'/api/s/'.$this->site.'/list/portconf'));
         return $this->process_response($content_decoded);
     }
 
@@ -959,7 +959,7 @@ class UniFi extends IPSModule {
     public function list_extension()
     {
         if (!$this->is_loggedin) return false;
-        $content_decoded = json_decode($this->exec_curl($this->baseurl.'/api/s/'.$this->site.'/list/extension'));
+        $content_decoded = json_decode($this->exec_curl($this->baseURL.'/api/s/'.$this->site.'/list/extension'));
         return $this->process_response($content_decoded);
     }
 
@@ -971,7 +971,7 @@ class UniFi extends IPSModule {
     public function list_settings()
     {
         if (!$this->is_loggedin) return false;
-        $content_decoded = json_decode($this->exec_curl($this->baseurl.'/api/s/'.$this->site.'/get/setting'));
+        $content_decoded = json_decode($this->exec_curl($this->baseURL.'/api/s/'.$this->site.'/get/setting'));
         return $this->process_response($content_decoded);
     }
 
@@ -986,7 +986,7 @@ class UniFi extends IPSModule {
         if (!$this->is_loggedin) return false;
         $mac             = strtolower($mac);
         $json            = json_encode(['mac' => $mac, 'cmd' => 'adopt']);
-        $content_decoded = json_decode($this->exec_curl($this->baseurl.'/api/s/'.$this->site.'/cmd/devmgr', 'json='.$json));
+        $content_decoded = json_decode($this->exec_curl($this->baseURL.'/api/s/'.$this->site.'/cmd/devmgr', 'json='.$json));
         return $this->process_response_boolean($content_decoded);
     }
 
@@ -1001,7 +1001,7 @@ class UniFi extends IPSModule {
         if (!$this->is_loggedin) return false;
         $mac             = strtolower($mac);
         $json            = json_encode(['cmd' => 'restart', 'mac' => $mac]);
-        $content_decoded = json_decode($this->exec_curl($this->baseurl.'/api/s/'.$this->site.'/cmd/devmgr', 'json='.$json));
+        $content_decoded = json_decode($this->exec_curl($this->baseURL.'/api/s/'.$this->site.'/cmd/devmgr', 'json='.$json));
         return $this->process_response_boolean($content_decoded);
     }
 
@@ -1022,7 +1022,7 @@ class UniFi extends IPSModule {
         if (!$this->is_loggedin) return false;
         $this->request_type = 'PUT';
         $json               = json_encode(['disabled' => (bool)$disable]);
-        $content_decoded    = json_decode($this->exec_curl($this->baseurl.'/api/s/'.$this->site.'/rest/device/'.trim($ap_id), $json));
+        $content_decoded    = json_decode($this->exec_curl($this->baseURL.'/api/s/'.$this->site.'/rest/device/'.trim($ap_id), $json));
         return $this->process_response_boolean($content_decoded);
     }
 
@@ -1045,7 +1045,7 @@ class UniFi extends IPSModule {
         $override_mode_options = ['off', 'on', 'default'];
         if (in_array($override_mode, $override_mode_options)) {
             $json            = json_encode(['led_override' => $override_mode]);
-            $content_decoded = json_decode($this->exec_curl($this->baseurl.'/api/s/'.$this->site.'/rest/device/'.trim($device_id), $json));
+            $content_decoded = json_decode($this->exec_curl($this->baseURL.'/api/s/'.$this->site.'/rest/device/'.trim($device_id), $json));
             return $this->process_response_boolean($content_decoded);
         }
 
@@ -1068,7 +1068,7 @@ class UniFi extends IPSModule {
         $mac             = strtolower($mac);
         $cmd             = (($enable) ? 'set-locate' : 'unset-locate');
         $json            = json_encode(['cmd' => $cmd, 'mac' => $mac]);
-        $content_decoded = json_decode($this->exec_curl($this->baseurl.'/api/s/'.$this->site.'/cmd/devmgr', 'json='.$json));
+        $content_decoded = json_decode($this->exec_curl($this->baseURL.'/api/s/'.$this->site.'/cmd/devmgr', 'json='.$json));
         return $this->process_response_boolean($content_decoded);
     }
 
@@ -1082,7 +1082,7 @@ class UniFi extends IPSModule {
     {
         if (!$this->is_loggedin) return false;
         $json            = json_encode(['led_enabled' => (bool)$enable]);
-        $content_decoded = json_decode($this->exec_curl($this->baseurl.'/api/s/'.$this->site.'/set/setting/mgmt', 'json='.$json));
+        $content_decoded = json_decode($this->exec_curl($this->baseURL.'/api/s/'.$this->site.'/set/setting/mgmt', 'json='.$json));
         return $this->process_response_boolean($content_decoded);
     }
 
@@ -1101,7 +1101,7 @@ class UniFi extends IPSModule {
     {
         if (!$this->is_loggedin) return false;
         $json            = json_encode(['radio_table' => ['radio' => $radio, 'channel' => $channel, 'ht' => $ht, 'tx_power_mode' => $tx_power_mode, 'tx_power' =>$tx_power]]);
-        $content_decoded = json_decode($this->exec_curl($this->baseurl.'/api/s/'.$this->site.'/upd/device/'.trim($ap_id), 'json='.$json));
+        $content_decoded = json_decode($this->exec_curl($this->baseURL.'/api/s/'.$this->site.'/upd/device/'.trim($ap_id), 'json='.$json));
         return $this->process_response_boolean($content_decoded);
     }
 
@@ -1143,7 +1143,7 @@ class UniFi extends IPSModule {
             'site_id'           => $site_id
         ];
         $json            = json_encode($json, JSON_UNESCAPED_SLASHES);
-        $content_decoded = json_decode($this->exec_curl($this->baseurl.'/api/s/'.$this->site.'/set/setting/guest_access', 'json='.$json));
+        $content_decoded = json_decode($this->exec_curl($this->baseURL.'/api/s/'.$this->site.'/set/setting/guest_access', 'json='.$json));
         return $this->process_response_boolean($content_decoded);
     }
 
@@ -1158,7 +1158,7 @@ class UniFi extends IPSModule {
     {
         if (!$this->is_loggedin) return false;
         $json            = json_encode(['name' => $apname]);
-        $content_decoded = json_decode($this->exec_curl($this->baseurl.'/api/s/'.$this->site.'/upd/device/'.trim($ap_id), 'json='.$json));
+        $content_decoded = json_decode($this->exec_curl($this->baseURL.'/api/s/'.$this->site.'/upd/device/'.trim($ap_id), 'json='.$json));
         return $this->process_response_boolean($content_decoded);
     }
 
@@ -1220,7 +1220,7 @@ class UniFi extends IPSModule {
         ];
         if (!is_null($vlan) && $vlan_enabled) $json['vlan'] = $vlan;
         $json            = json_encode($json);
-        $content_decoded = json_decode($this->exec_curl($this->baseurl.'/api/s/'.$this->site.'/add/wlanconf', 'json='.$json));
+        $content_decoded = json_decode($this->exec_curl($this->baseURL.'/api/s/'.$this->site.'/add/wlanconf', 'json='.$json));
         return $this->process_response_boolean($content_decoded);
     }
 
@@ -1234,7 +1234,7 @@ class UniFi extends IPSModule {
     {
         if (!$this->is_loggedin) return false;
         $json            = json_encode([]);
-        $content_decoded = json_decode($this->exec_curl($this->baseurl.'/api/s/'.$this->site.'/del/wlanconf/'.trim($wlan_id), 'json='.$json));
+        $content_decoded = json_decode($this->exec_curl($this->baseURL.'/api/s/'.$this->site.'/del/wlanconf/'.trim($wlan_id), 'json='.$json));
         return $this->process_response_boolean($content_decoded);
     }
 
@@ -1254,7 +1254,7 @@ class UniFi extends IPSModule {
         if (!is_null($x_passphrase)) $json['x_passphrase'] = trim($x_passphrase);
         if (!is_null($name)) $json['name'] = trim($name);
         $json            = json_encode($json);
-        $content_decoded = json_decode($this->exec_curl($this->baseurl.'/api/s/'.$this->site.'/upd/wlanconf/'.trim($wlan_id), 'json='.$json));
+        $content_decoded = json_decode($this->exec_curl($this->baseURL.'/api/s/'.$this->site.'/upd/wlanconf/'.trim($wlan_id), 'json='.$json));
         return $this->process_response_boolean($content_decoded);
     }
 
@@ -1271,7 +1271,7 @@ class UniFi extends IPSModule {
         $action          = ($disable) ? false : true;
         $json            = ['enabled' => (bool)$action];
         $json            = json_encode($json);
-        $content_decoded = json_decode($this->exec_curl($this->baseurl.'/api/s/'.$this->site.'/upd/wlanconf/'.trim($wlan_id), 'json='.$json));
+        $content_decoded = json_decode($this->exec_curl($this->baseURL.'/api/s/'.$this->site.'/upd/wlanconf/'.trim($wlan_id), 'json='.$json));
         return $this->process_response_boolean($content_decoded);
     }
 
@@ -1288,7 +1288,7 @@ class UniFi extends IPSModule {
         if (!$this->is_loggedin) return false;
         $json            = ['_sort' => '-time', 'within' => $historyhours, 'type' => null, '_start' => $start, '_limit' => $limit];
         $json            = json_encode($json);
-        $content_decoded = json_decode($this->exec_curl($this->baseurl.'/api/s/'.$this->site.'/stat/event', 'json='.$json));
+        $content_decoded = json_decode($this->exec_curl($this->baseURL.'/api/s/'.$this->site.'/stat/event', 'json='.$json));
         return $this->process_response($content_decoded);
     }
 
@@ -1300,7 +1300,7 @@ class UniFi extends IPSModule {
     public function list_wlanconf()
     {
         if (!$this->is_loggedin) return false;
-        $content_decoded = json_decode($this->exec_curl($this->baseurl.'/api/s/'.$this->site.'/list/wlanconf'));
+        $content_decoded = json_decode($this->exec_curl($this->baseURL.'/api/s/'.$this->site.'/list/wlanconf'));
         return $this->process_response($content_decoded);
     }
 
@@ -1312,7 +1312,7 @@ class UniFi extends IPSModule {
     public function list_alarms()
     {
         if (!$this->is_loggedin) return false;
-        $content_decoded = json_decode($this->exec_curl($this->baseurl.'/api/s/'.$this->site.'/list/alarm'));
+        $content_decoded = json_decode($this->exec_curl($this->baseURL.'/api/s/'.$this->site.'/list/alarm'));
         return $this->process_response($content_decoded);
     }
 
@@ -1326,7 +1326,7 @@ class UniFi extends IPSModule {
     {
         if (!$this->is_loggedin) return false;
         $url_suffix      = ($archived === false) ? '?archived=false' : null;
-        $content_decoded = json_decode($this->exec_curl($this->baseurl.'/api/s/'.$this->site.'/cnt/alarm'.$url_suffix));
+        $content_decoded = json_decode($this->exec_curl($this->baseURL.'/api/s/'.$this->site.'/cnt/alarm'.$url_suffix));
         return $this->process_response($content_decoded);
     }
 
@@ -1344,7 +1344,7 @@ class UniFi extends IPSModule {
         if (!$this->is_loggedin) return false;
         $json            = ['mac' => $device_mac];
         $json            = json_encode($json);
-        $content_decoded = json_decode($this->exec_curl($this->baseurl.'/api/s/'.$this->site.'/cmd/devmgr/upgrade', 'json='.$json));
+        $content_decoded = json_decode($this->exec_curl($this->baseURL.'/api/s/'.$this->site.'/cmd/devmgr/upgrade', 'json='.$json));
         return $this->process_response_boolean($content_decoded);
     }
 
@@ -1364,7 +1364,7 @@ class UniFi extends IPSModule {
         if (!$this->is_loggedin) return false;
         $json            = ['url' => $firmware_url, 'mac' => $device_mac];
         $json            = json_encode($json, JSON_UNESCAPED_SLASHES);
-        $content_decoded = json_decode($this->exec_curl($this->baseurl.'/api/s/'.$this->site.'/cmd/devmgr/upgrade-external', 'json='.$json));
+        $content_decoded = json_decode($this->exec_curl($this->baseURL.'/api/s/'.$this->site.'/cmd/devmgr/upgrade-external', 'json='.$json));
         return $this->process_response_boolean($content_decoded);
     }
 
@@ -1379,7 +1379,7 @@ class UniFi extends IPSModule {
         if (!$this->is_loggedin) return false;
         $json            = ['cmd' => 'spectrum-scan', 'mac' => $ap_mac];
         $json            = json_encode($json);
-        $content_decoded = json_decode($this->exec_curl($this->baseurl.'/api/s/'.$this->site.'/cmd/devmgr', 'json='.$json));
+        $content_decoded = json_decode($this->exec_curl($this->baseURL.'/api/s/'.$this->site.'/cmd/devmgr', 'json='.$json));
         return $this->process_response_boolean($content_decoded);
     }
 
@@ -1393,7 +1393,7 @@ class UniFi extends IPSModule {
     {
         if (!$this->is_loggedin) return false;
         $json            = json_encode($json);
-        $content_decoded = json_decode($this->exec_curl($this->baseurl.'/api/s/'.$this->site.'/stat/spectrum-scan/'.trim($ap_mac)));
+        $content_decoded = json_decode($this->exec_curl($this->baseURL.'/api/s/'.$this->site.'/stat/spectrum-scan/'.trim($ap_mac)));
         return $this->process_response($content_decoded);
     }
 
@@ -1774,7 +1774,7 @@ class UniFi extends IPSModule {
         //Never delete this line!
         parent::ApplyChanges();
 
-        $this->baseurl = $this->ReadPropertyString("IPAddress");
+        $this->baseURL = $this->ReadPropertyString("IPAddress");
         $this->user = $this->ReadPropertyString("UserName");
         $this->password = $this->ReadPropertyString("UserPassword");
         $this->site = "Default";

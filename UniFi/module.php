@@ -31,9 +31,11 @@ class UniFi extends IPSModule {
         $this->RegisterPropertyString("UserName", "admin");
         $this->RegisterPropertyString("UserPassword", "");
         $this->RegisterPropertyString("Clients", "");
-        $this->RegisterPropertyInteger("Intervall", 0);
+        $this->RegisterPropertyInteger("Intervall_Network", 0);
+        $this->RegisterPropertyInteger("Intervall_Client", 0);
         $this->RegisterPropertyBoolean("Debug", FALSE);
-        $this->RegisterTimer("Interval", 0, 'UniFi_UpdateUniFiModuleData($_IPS[\'TARGET\']);');
+        $this->RegisterTimer("Intervall_Network", 0, 'UniFi_UpdateUniFiNetworkData($_IPS[\'TARGET\']);');
+        $this->RegisterTimer("Intervall_Client", 0, 'UniFi_UpdateUniFiClientData($_IPS[\'TARGET\']);');
     }
 
      /**
@@ -1766,11 +1768,13 @@ class UniFi extends IPSModule {
         $this->password = $this->ReadPropertyString("UserPassword");
         $this->site = "Default";
         $this->version = '5.4.16';
-        $this->checkInterval = $this->ReadPropertyInteger("Intervall");
+        $this->checkIntervalNetwork = $this->ReadPropertyInteger("Intervall_Network");
+        $this->checkIntervalClient = $this->ReadPropertyInteger("Intervall_Client");
         $this->debug = $this->ReadPropertyBoolean("Debug");
 
         $this->RegisterVariableString("ClientHTMLBox", "ClientHTMLBox", "~HTMLBox");
-        $this->SetTimerInterval("Interval", ($this->ReadPropertyInteger("Intervall") * 1000));
+        $this->SetTimerInterval("Intervall_Network", ($this->ReadPropertyInteger("Intervall_Network") * 1000));
+        $this->SetTimerInterval("Intervall_Client", ($this->ReadPropertyInteger("Intervall_Client") * 1000));
         
         # create neccessary folders
         $instance_id_parent = $this->InstanceID;
@@ -1790,13 +1794,14 @@ class UniFi extends IPSModule {
         #$this->RegisterScript("setWLAN", "setWLAN", $setWLANScript);
     } 
     
-    public function UpdateUniFiModuleData() {
+    public function UpdateUniFiNetworkData() {
         $this->baseURL = $this->ReadPropertyString("IPAddress");
         $this->user = $this->ReadPropertyString("UserName");
         $this->password = $this->ReadPropertyString("UserPassword");
         $this->site = "Default";
         $this->version = '5.4.16';
-        $this->checkInterval = $this->ReadPropertyInteger("Intervall");
+        $this->checkIntervalNetwork = $this->ReadPropertyInteger("Intervall_Network");
+        $this->checkIntervalClient = $this->ReadPropertyInteger("Intervall_Client");
         $this->debug = $this->ReadPropertyBoolean("Debug");
        
         # create neccessary folders
@@ -1806,6 +1811,23 @@ class UniFi extends IPSModule {
 
         $this->GetWLANnetworks($instance_WLAN_ID);        
     }
+
+    public function UpdateUniFiClientData() {
+        $this->baseURL = $this->ReadPropertyString("IPAddress");
+        $this->user = $this->ReadPropertyString("UserName");
+        $this->password = $this->ReadPropertyString("UserPassword");
+        $this->site = "Default";
+        $this->version = '5.4.16';
+        $this->checkIntervalNetwork = $this->ReadPropertyInteger("Intervall_Network");
+        $this->checkIntervalClient = $this->ReadPropertyInteger("Intervall_Client");
+        $this->debug = $this->ReadPropertyBoolean("Debug");
+       
+        # create neccessary folders
+        $instance_id_parent = $this->InstanceID;
+        $instance_Clients_ID = $this->CreateCategoryByIdent($instance_id_parent, "Clients", "Clients");
+        $instance_WLAN_ID    = $this->CreateCategoryByIdent($instance_id_parent, "WLAN", "WLAN");
+     
+    }    
 }
 
 ?>

@@ -16,6 +16,7 @@ class UniFi extends IPSModule {
         $this->RegisterPropertyString("UserName", "admin");
         $this->RegisterPropertyString("UserPassword", "");
         $this->RegisterPropertyString("Clients", "");
+        $this->RegisterPropertyInteger("Intervall", 0);
     }
 
     public function ApplyChanges() {
@@ -25,6 +26,7 @@ class UniFi extends IPSModule {
         $this->baseURL = $this->ReadPropertyString("IPAddress");
         $this->userName = $this->ReadPropertyString("UserName");
         $this->userPassword = $this->ReadPropertyString("UserPassword");
+        $this->checkInterval = $this->ReadPropertyString("Intervall");
 
         $this->RegisterVariableString("ClientHTMLBox", "ClientHTMLBox", "~HTMLBox");
 

@@ -1733,10 +1733,8 @@ class UniFi extends IPSModule {
     }
     
     private function GetWLANnetworks($instance_WLAN_ID) {
-        #$wlanList = $this->GetWLANConfig();
-        $wlanList = $this->list_wlanconf();
-        print_r($wlanList);
-
+        $wlanList = $this->GetWLANConfig();
+        
         foreach ($wlanList->data as $wlan) {
             $ident = $wlan->_id;
             $catID = $this->CreateCategoryByNameIdent($wlan->name, $ident, $instance_WLAN_ID);

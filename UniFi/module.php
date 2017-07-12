@@ -32,11 +32,11 @@ class UniFi extends IPSModule {
 
         $updateClientsScript = file_get_contents(__DIR__ . "/createClientList.php");
         $updateClientsScriptID = $this->RegisterScript("updateClients", "updateClients", $updateClientsScript);
-        IPS_SetScriptTimer($updateClientsScriptID, 60);
+        IPS_SetScriptTimer($updateClientsScriptID, $this->checkInterval);
 
         $updateWLANScript = file_get_contents(__DIR__ . "/createWLANList.php");
         $updateWLANScriptID = $this->RegisterScript("updateWLAN", "updateWLAN", $updateWLANScript);
-        IPS_SetScriptTimer($updateWLANScriptID, 60);
+        IPS_SetScriptTimer($updateWLANScriptID, $this->checkInterval);
 
         $setWLANScript = file_get_contents(__DIR__ . "/setWLAN.php");
         $this->RegisterScript("setWLAN", "setWLAN", $setWLANScript);

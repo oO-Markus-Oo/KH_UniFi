@@ -238,7 +238,7 @@ class UniFi extends IPSModule {
         SetVariable($VarID, $Type, $Value);
     }
     
-    function GetWLANnetworks($instance_WLAN_ID) {
+    public function GetWLANnetworks($instance_WLAN_ID) {
         $parentID = IPS_GetParent($_IPS["SELF"]);
         $wlanList = GetWLANConfig();
 

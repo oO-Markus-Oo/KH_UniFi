@@ -41,34 +41,34 @@ class UniFi extends IPSModule {
      */
     public function login()
     {
-        $ch = $this->get_curl_obj();
+        $this->$ch = $this->get_curl_obj();
 
-        curl_setopt($ch, CURLOPT_HEADER, 1);
-        curl_setopt($ch, CURLOPT_REFERER, $this->baseURL.'/login');
-        curl_setopt($ch, CURLOPT_URL, $this->baseURL.'/api/login');
-        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode(['username' => $this->user, 'password' => $this->password]));
+        curl_setopt($this->$ch, CURLOPT_HEADER, 1);
+        curl_setopt($this->$ch, CURLOPT_REFERER, $this->baseURL.'/login');
+        curl_setopt($this->$ch, CURLOPT_URL, $this->baseURL.'/api/login');
+        curl_setopt($this->$ch, CURLOPT_POSTFIELDS, json_encode(['username' => $this->user, 'password' => $this->password]));
 
-        if (($content = curl_exec($ch)) === false) {
-            error_log('cURL error: '.curl_error($ch));
+        if (($content = curl_exec($this->$ch)) === false) {
+            error_log('cURL error: '.curl_error($this->$ch));
         }
 
         if ($this->debug) {
-            curl_setopt($ch, CURLOPT_VERBOSE, true);
+            curl_setopt($this->$ch, CURLOPT_VERBOSE, true);
 
             print '<pre>';
             print PHP_EOL.'-----------LOGIN-------------'.PHP_EOL;
-            print_r (curl_getinfo($ch));
+            print_r (curl_getinfo($this->$ch));
             print PHP_EOL.'----------RESPONSE-----------'.PHP_EOL;
             print $content;
             print PHP_EOL.'-----------------------------'.PHP_EOL;
             print '</pre>';
         }
 
-        $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+        $header_size = curl_getinfo($this->$ch, CURLINFO_HEADER_SIZE);
         $body        = trim(substr($content, $header_size));
-        $code        = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $code        = curl_getinfo($this->$ch, CURLINFO_HTTP_CODE);
 
-        curl_close ($ch);
+        curl_close ($this->$ch);
 
         preg_match_all('|Set-Cookie: (.*);|U', substr($content, 0, $header_size), $results);
         if (isset($results[1])) {

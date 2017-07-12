@@ -33,7 +33,7 @@ class UniFi extends IPSModule {
         $this->RegisterPropertyString("Clients", "");
         $this->RegisterPropertyInteger("Intervall", 0);
         $this->RegisterPropertyBoolean("Debug", FALSE);
-        $this->RegisterTimer("Interval", 0, 'UniFi_ApplyChanges();');
+        $this->RegisterTimer("Interval", 0, 'UniFi_UpdateModuleData();');
     }
 
      /**
@@ -1788,7 +1788,24 @@ class UniFi extends IPSModule {
 
         #$setWLANScript = file_get_contents(__DIR__ . "/setWLAN.php");
         #$this->RegisterScript("setWLAN", "setWLAN", $setWLANScript);
-    }    
+    } 
+    
+    public function UpdateModuleData() {
+        $this->baseURL = $this->ReadPropertyString("IPAddress");
+        $this->user = $this->ReadPropertyString("UserName");
+        $this->password = $this->ReadPropertyString("UserPassword");
+        $this->site = "Default";
+        $this->version = '5.4.16';
+        $this->checkInterval = $this->ReadPropertyInteger("Intervall");
+        $this->debug = $this->ReadPropertyBoolean("Debug");
+       
+        # create neccessary folders
+        $instance_id_parent = $this->InstanceID;
+        $instance_Clients_ID = $this->CreateCategoryByIdent($instance_id_parent, "Clients", "Clients");
+        $instance_WLAN_ID    = $this->CreateCategoryByIdent($instance_id_parent, "WLAN", "WLAN");
+
+        $this->GetWLANnetworks($instance_WLAN_ID);        
+    }
 }
 
 ?>

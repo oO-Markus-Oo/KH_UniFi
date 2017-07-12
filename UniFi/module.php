@@ -33,7 +33,7 @@ class UniFi extends IPSModule {
         $this->RegisterPropertyString("Clients", "");
         $this->RegisterPropertyInteger("Intervall", 0);
         $this->RegisterPropertyBoolean("Debug", FALSE);
-        $this->RegisterTimer("Interval", 0, 'UniFi_UpdateUniFiModuleData();');
+        $this->RegisterTimer("Interval", 0, 'UniFi_UpdateUniFiModuleData($_IPS[\'TARGET\']);');
     }
 
      /**

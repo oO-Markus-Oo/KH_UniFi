@@ -210,8 +210,7 @@ class UniFi extends IPSModule {
     }
     
     private function GetWLANnetworks($instance_WLAN_ID) {
-        $parentID = IPS_GetParent($_IPS["SELF"]);
-        $wlanList = GetWLANConfig();
+        $wlanList = $this->GetWLANConfig();
 
         foreach ($wlanList->data as $wlan) {
             $ident = $wlan->_id;

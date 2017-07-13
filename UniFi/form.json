@@ -4,8 +4,8 @@
 		{ "name": "IPAddress",        "type": "ValidationTextBox", "caption": "IP-Address/Host" },
 		{ "name": "UserName",         "type": "ValidationTextBox", "caption": "Benutzername" },
 		{ "name": "UserPassword",     "type": "ValidationTextBox", "caption": "Password" },
-                { "name": "Intervall_Network",        "type": "IntervalBox", "name": "Netzwerke Update", "caption": "Sekunden" },
-                { "name": "Intervall_Client",         "type": "IntervalBox", "name": "Client Update", "caption": "Sekunden" },
+                { "name": "Intervall_Network",        "type": "IntervalBox", "caption": "Update-Intervall Netzwerke - Sekunden" },
+                { "name": "Intervall_Client",         "type": "IntervalBox", "caption": "Update-Intervall Clients - Sekunden" },
 		{
 			"type": "List",
 			"name": "Clients",

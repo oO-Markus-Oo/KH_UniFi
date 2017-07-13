@@ -1808,7 +1808,7 @@ class UniFi extends IPSModule {
         $instance_Clients_ID = $this->CreateCategoryByIdent($instance_id_parent, "Clients", "Clients");
         # $instance_WLAN_ID = $this->CreateCategoryByIdent($instance_id_parent, "WLAN", "WLAN");
         $instance_devices = $this->list_devices();
-        print_r($instance_devices);
+        $this->SendDebug("Fetch", print_r($instance_devices), 0);
     }
 
 }

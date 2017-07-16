@@ -4,6 +4,7 @@
 		{ "name": "IPAddress",        "type": "ValidationTextBox", "caption": "IP-Address/Host" },
 		{ "name": "UserName",         "type": "ValidationTextBox", "caption": "Benutzername" },
 		{ "name": "UserPassword",     "type": "ValidationTextBox", "caption": "Password" },
+                { "name": "Site",             "type": "ValidationTextBox", "caption": "UniFi Site" },
                 { "name": "Intervall_Network",        "type": "IntervalBox", "caption": "Update Netzwerke (s)" },
                 { "name": "Intervall_Client",         "type": "IntervalBox", "caption": "Update Clients (s)" },
                 { "name": "Debug",            "type": "CheckBox",  "caption": "Debug Modus" },

@@ -32,6 +32,7 @@ class UniFi extends IPSModule {
         $this->RegisterPropertyString("UserName", "admin");
         $this->RegisterPropertyString("UserPassword", "");
         $this->RegisterPropertyString("Clients", "");
+        $this->RegisterPropertyString("Site", "");
         $this->RegisterPropertyInteger("Intervall_Network", 0);
         $this->RegisterPropertyInteger("Intervall_Client", 0);
         $this->RegisterPropertyBoolean("Debug", FALSE);
@@ -1794,7 +1795,7 @@ class UniFi extends IPSModule {
         $this->baseURL = $this->ReadPropertyString("IPAddress");
         $this->user = $this->ReadPropertyString("UserName");
         $this->password = $this->ReadPropertyString("UserPassword");
-        $this->site = "Default";
+        $this->site = $this->ReadPropertyInteger("Site");
         $this->version = '5.4.16';
         $this->checkIntervalNetwork = $this->ReadPropertyInteger("Intervall_Network");
         $this->checkIntervalClient = $this->ReadPropertyInteger("Intervall_Client");
@@ -1824,7 +1825,7 @@ class UniFi extends IPSModule {
         $this->baseURL = $this->ReadPropertyString("IPAddress");
         $this->user = $this->ReadPropertyString("UserName");
         $this->password = $this->ReadPropertyString("UserPassword");
-        $this->site = "Default";
+        $this->site = $this->ReadPropertyInteger("Site");
         $this->version = '5.4.16';
         $this->checkIntervalNetwork = $this->ReadPropertyInteger("Intervall_Network");
         $this->checkIntervalClient = $this->ReadPropertyInteger("Intervall_Client");
@@ -1842,7 +1843,7 @@ class UniFi extends IPSModule {
         $this->baseURL = $this->ReadPropertyString("IPAddress");
         $this->user = $this->ReadPropertyString("UserName");
         $this->password = $this->ReadPropertyString("UserPassword");
-        $this->site = "Default";
+        $this->site = $this->ReadPropertyInteger("Site");
         $this->version = '5.4.16';
         $this->checkIntervalNetwork = $this->ReadPropertyInteger("Intervall_Network");
         $this->checkIntervalClient = $this->ReadPropertyInteger("Intervall_Client");

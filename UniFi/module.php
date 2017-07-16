@@ -1758,33 +1758,29 @@ class UniFi extends IPSModule {
     private function GetWLANclients($instance_Clients_ID) {
         $clientList = $this->list_clients();
 
-        if (is_object($clientList)) {
-            foreach ($clientList->data as $client) {              
-                $ident = str_replace(":", "", $client->mac);
-                $catID = $this->CreateCategoryByNameIdent($client->mac, $ident . "_name", $instance_Clients_ID);
-                //CreateVariable("MAC", 3, $client->mac, $ident . "_mac", $catID);
-                //CreateVariable("IP", 3, $client->ip, $ident . "_ip", $catID);
-                //CreateVariable("AP Name", 3, $apName, $ident . "_apname", $catID);
-                //CreateVariable("Signal", 1, $client->signal, $ident . "_signal", $catID);
-                //CreateVariable("Radio", 3, $client->radio, $ident . "_radio", $catID);
-                //CreateVariable("TX Bytes", 1, $client->tx_bytes, $ident . "_txbytes", $catID);
-                //CreateVariable("RX Bytes", 1, $client->rx_bytes, $ident . "_rxbytes", $catID);
-                //CreateVariable("Uptime", 1, $client->uptime, $ident . "_uptime", $catID);
-            }
+        foreach ($clientList->data as $client) {              
+            $ident = str_replace(":", "", $client->mac);
+            $catID = $this->CreateCategoryByNameIdent($client->mac, $ident . "_name", $instance_Clients_ID);
+            //CreateVariable("MAC", 3, $client->mac, $ident . "_mac", $catID);
+            //CreateVariable("IP", 3, $client->ip, $ident . "_ip", $catID);
+            //CreateVariable("AP Name", 3, $apName, $ident . "_apname", $catID);
+            //CreateVariable("Signal", 1, $client->signal, $ident . "_signal", $catID);
+            //CreateVariable("Radio", 3, $client->radio, $ident . "_radio", $catID);
+            //CreateVariable("TX Bytes", 1, $client->tx_bytes, $ident . "_txbytes", $catID);
+            //CreateVariable("RX Bytes", 1, $client->rx_bytes, $ident . "_rxbytes", $catID);
+            //CreateVariable("Uptime", 1, $client->uptime, $ident . "_uptime", $catID);
         }
     }
 
     private function GetWLANnetworks($instance_WLAN_ID) {
         $wlanList = $this->list_wlanconf();
 
-        if (is_object($wlanList)) {
-            foreach ($wlanList->data as $wlan) {
-                $ident = $wlan->_id;
-                $catID = $this->CreateCategoryByNameIdent($wlan->name, $ident, $instance_WLAN_ID);
-                $this->CreateVariable("ID", 3, $wlan->_id, $ident . "_id", $catID);
-                $this->CreateVariable("Enabled", 0, $wlan->enabled, $ident . "_enabled", $catID);
-                $this->CreateVariable("Security", 3, $wlan->security, $ident . "_security", $catID);
-            }
+        foreach ($wlanList->data as $wlan) {
+            $ident = $wlan->_id;
+            $catID = $this->CreateCategoryByNameIdent($wlan->name, $ident, $instance_WLAN_ID);
+            $this->CreateVariable("ID", 3, $wlan->_id, $ident . "_id", $catID);
+            $this->CreateVariable("Enabled", 0, $wlan->enabled, $ident . "_enabled", $catID);
+            $this->CreateVariable("Security", 3, $wlan->security, $ident . "_security", $catID);
         }
     }
 

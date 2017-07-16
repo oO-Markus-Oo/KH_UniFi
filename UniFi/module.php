@@ -1796,8 +1796,9 @@ class UniFi extends IPSModule {
         # create neccessary folders
         $instance_id_parent = $this->InstanceID;
         $instance_Clients_ID = $this->CreateCategoryByIdent($instance_id_parent, "Clients", "Clients");
+        $instance_Clients_Wireless_ID = $this->CreateCategoryByIdent($instance_id_parent, "Wireless", "Wireless");
 
-        $this->GetWLANclients($instance_Clients_ID);
+        $this->GetWLANclients($instance_Clients_Wireless_ID);
         $this->Logout();
     }
 

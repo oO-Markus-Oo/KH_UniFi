@@ -6,6 +6,7 @@
 		{ "name": "UserPassword",     "type": "ValidationTextBox", "caption": "Password" },
                 { "name": "Intervall_Network",        "type": "IntervalBox", "caption": "Update Netzwerke (s)" },
                 { "name": "Intervall_Client",         "type": "IntervalBox", "caption": "Update Clients (s)" },
+                { "name": "Debug",            "type": "CheckBox",  "caption": "Debug Modus" },
 		{
 			"type": "List",
 			"name": "Clients",

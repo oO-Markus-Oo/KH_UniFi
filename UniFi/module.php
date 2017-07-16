@@ -1606,12 +1606,11 @@ class UniFi extends IPSModule {
     }
 
      private function CreateCategoryByNameIdent($name, $Ident = '', $ParentID = 0, $pos = 0, $hidden = false) {
-        global $_IPS;
         if ($Ident <> '') {
-            $Catid = @IPS_GetObjectIDByIdent($Ident, $ParentID);
+            $Catid = IPS_GetObjectIDByIdent($Ident, $ParentID);
         }
-        if (($Ident === '') OR ( $Catid === false) OR ( $Catid === '')) {
-            $Catid = @IPS_GetCategoryIDByName($name, $ParentID);
+        if ($Ident === '') {
+            $Catid = IPS_GetCategoryIDByName($name, $ParentID);
         }
 
         if ($Catid === false) {

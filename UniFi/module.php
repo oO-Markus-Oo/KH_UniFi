@@ -1713,7 +1713,7 @@ class UniFi extends IPSModule {
                 if($client->is_wired === FALSE)
                 {
                     $ident = str_replace(":", "", $client->mac);
-                    $catID = $this->CreateCategoryByIdent($client->name, $ident . "_name", $instance_Clients_ID);
+                    $catID = $this->CreateCategoryByIdent($instance_Clients_ID, $client->name, $ident . "_name");
                     $this->CreateVariable("MAC", 3, $client->mac, $ident . "_mac", $catID);
                     $this->CreateVariable("IP", 3, $client->ip, $ident . "_ip", $catID);
                     $this->CreateVariable("Hostname", 3, $client->hostname, $ident . "_hostname", $catID);
@@ -1733,7 +1733,7 @@ class UniFi extends IPSModule {
         if (is_object($this->last_results_raw)) {
             foreach ($this->last_results_raw->data as $wlan) {
                 $ident = $wlan->_id;
-                $catID = $this->CreateCategoryByIdent($wlan->name, $ident, $instance_WLAN_ID);
+                $catID = $this->CreateCategoryByIdent($instance_WLAN_ID, $wlan->name, $ident);
                 $this->CreateVariable("ID", 3, $wlan->_id, $ident . "_id", $catID);
                 $this->CreateVariable("Enabled", 0, $wlan->enabled, $ident . "_enabled", $catID);
                 $this->CreateVariable("Security", 3, $wlan->security, $ident . "_security", $catID);

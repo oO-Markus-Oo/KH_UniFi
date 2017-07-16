@@ -42,7 +42,8 @@ class UniFi extends IPSModule {
     /**
      * Login to UniFi Controller
      */
-    private function Login() {
+    public function login()
+    {
         $this->baseURL = $this->ReadPropertyString("IPAddress");
         $this->userName = $this->ReadPropertyString("UserName");
         $this->userPassword = $this->ReadPropertyString("UserPassword");
@@ -50,23 +51,58 @@ class UniFi extends IPSModule {
         # init curl object and set session-wide options
         $this->ch = curl_init();
 
-
+        curl_setopt($ch, CURLOPT_HEADER, 1);
+        curl_setopt($ch, CURLOPT_REFERER, $this->baseurl.'/login');
+        curl_setopt($ch, CURLOPT_URL, $this->baseURL.'/api/login');
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode(['username' => $this->userName, 'password' => $this->userPassword]));
         curl_setopt($this->ch, CURLOPT_RETURNTRANSFER, TRUE);
         curl_setopt($this->ch, CURLOPT_SSL_VERIFYPEER, FALSE);
         curl_setopt($this->ch, CURLOPT_SSL_VERIFYHOST, FALSE);
         curl_setopt($this->ch, CURLOPT_COOKIEFILE, "/tmp/unifi_cookie");
         curl_setopt($this->ch, CURLOPT_COOKIEJAR, "/tmp/unifi_cookie");
-        curl_setopt($this->ch, CURLOPT_SSLVERSION, 1); //set TLSv1 (SSLv3 is no longer supported)
-        # authenticate against unifi controller
-        $url = $this->baseURL . "/api/login";
-        $json = "{'username':'" . $this->userName . "', 'password':'" . $this->userPassword . "'}";
+        curl_setopt($this->ch, CURLOPT_SSLVERSION, 1); //set TLSv1 (SSLv3 is no longer supported)        
 
-        curl_setopt($this->ch, CURLOPT_URL, $url);
-        curl_setopt($this->ch, CURLOPT_POST, 1);
-        curl_setopt($this->ch, CURLOPT_POSTFIELDS, $json);
+        if (($content = curl_exec($this->ch)) === false) {
+            error_log('cURL error: '.curl_error($ch));
+        }
 
-        curl_exec($this->ch);
-    }
+        if ($this->debug) {
+            curl_setopt($this->ch, CURLOPT_VERBOSE, true);
+
+            print '<pre>';
+            print PHP_EOL.'-----------LOGIN-------------'.PHP_EOL;
+            print_r (curl_getinfo($this->ch));
+            print PHP_EOL.'----------RESPONSE-----------'.PHP_EOL;
+            print $content;
+            print PHP_EOL.'-----------------------------'.PHP_EOL;
+            print '</pre>';
+        }
+
+        $header_size = curl_getinfo($this->ch, CURLINFO_HEADER_SIZE);
+        $body        = trim(substr($content, $header_size));
+        $code        = curl_getinfo($this->ch, CURLINFO_HTTP_CODE);
+
+        curl_close ($this->ch);
+
+        preg_match_all('|Set-Cookie: (.*);|U', substr($content, 0, $header_size), $results);
+        if (isset($results[1])) {
+            $this->cookies = implode(';', $results[1]);
+            if (!empty($body)) {
+                if (($code >= 200) && ($code < 400)) {
+                    if (strpos($this->cookies, 'unifises') !== false) {
+                        $this->is_loggedin = true;
+                    }
+                }
+
+                if ($code === 400) {
+                     error_log('We have received an HTTP response status: 400. Probably a controller login failure');
+                     return $code;
+                }
+            }
+        }
+
+        return $this->is_loggedin;
+    }    
 
     /**
      * Logout from UniFi Controller

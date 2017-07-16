@@ -1791,6 +1791,7 @@ class UniFi extends IPSModule {
         $this->checkIntervalNetwork = $this->ReadPropertyInteger("Intervall_Network");
         $this->checkIntervalClient = $this->ReadPropertyInteger("Intervall_Client");
         $this->debug = $this->ReadPropertyBoolean("Debug");
+        $this->Login();
 
         # create neccessary folders
         $instance_id_parent = $this->InstanceID;
@@ -1808,6 +1809,7 @@ class UniFi extends IPSModule {
         $this->checkIntervalNetwork = $this->ReadPropertyInteger("Intervall_Network");
         $this->checkIntervalClient = $this->ReadPropertyInteger("Intervall_Client");
         $this->debug = $this->ReadPropertyBoolean("Debug");
+        $this->Login();
 
         # create neccessary folders
         $instance_id_parent = $this->InstanceID;

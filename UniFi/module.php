@@ -500,8 +500,8 @@ class UniFi extends IPSModule {
      * optional parameter <client_mac> = the MAC address of a single online client device for which the call must be made
      */
     private function list_clients($client_mac = null) {
-        if (!$this->is_loggedin)
-            return false;
+        /*if (!$this->is_loggedin)
+            return false; */
         $content_decoded = json_decode($this->exec_curl($this->baseURL . '/api/s/' . $this->site . '/stat/sta/' . trim($client_mac)));
         return $this->process_response($content_decoded);
     }
@@ -770,8 +770,8 @@ class UniFi extends IPSModule {
      * returns an array of network configuration data
      */
     private function list_networkconf() {
-        if (!$this->is_loggedin)
-            return false;
+        /* if (!$this->is_loggedin)
+            return false; */
         $content_decoded = json_decode($this->exec_curl($this->baseURL . '/api/s/' . $this->site . '/list/networkconf'));
         return $this->process_response($content_decoded);
     }
@@ -1605,56 +1605,7 @@ class UniFi extends IPSModule {
         return $this->ch;
     }
 
-    private function GetClients() {
-        $this->Login();
-
-        $url = $this->baseURL . "/api/s/default/stat/sta";
-
-        curl_setopt($this->ch, CURLOPT_URL, $url);
-        curl_setopt($this->ch, CURLOPT_POST, 1);
-        curl_setopt($this->ch, CURLOPT_POSTFIELDS, "json={}");
-        $response = curl_exec($this->ch);
-
-        $this->logout();
-
-        if ($response !== false) {
-            return json_decode($response);
-        } else {
-            return 0;
-        }
-    }
-
-    private function GetWLANConfig() {
-        $this->Login();
-
-        $url = $this->baseURL . "/api/s/default/list/wlanconf";
-        curl_setopt($this->ch, CURLOPT_URL, $url);
-        curl_setopt($this->ch, CURLOPT_POST, 1);
-        curl_setopt($this->ch, CURLOPT_POSTFIELDS, "json={}");
-        $response = curl_exec($this->ch);
-
-        $this->logout();
-
-        if ($response !== false) {
-            return json_decode($response);
-        } else {
-            return 0;
-        }
-    }
-
-    private function SetWLANConfig($groupID, $config) {
-        $this->Login();
-
-        $url = $this->baseURL . "/api/s/default/upd/wlanconf/" . $groupID;
-        curl_setopt($this->ch, CURLOPT_URL, $url);
-        curl_setopt($this->ch, CURLOPT_POST, 1);
-        curl_setopt($this->ch, CURLOPT_POSTFIELDS, "json=" . json_encode($config) . "");
-        curl_exec($this->ch);
-
-        $this->logout();
-    }
-
-    private function CreateCategoryByNameIdent($name, $Ident = '', $ParentID = 0, $pos = 0, $hidden = false) {
+     private function CreateCategoryByNameIdent($name, $Ident = '', $ParentID = 0, $pos = 0, $hidden = false) {
         global $_IPS;
         if ($Ident <> '') {
             $Catid = @IPS_GetObjectIDByIdent($Ident, $ParentID);

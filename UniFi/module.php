@@ -1772,7 +1772,7 @@ class UniFi extends IPSModule {
         #$this->RegisterScript("setWLAN", "setWLAN", $setWLANScript);
     }
 
-    private function UpdateUniFiNetworkData() {
+    public function UpdateUniFiNetworkData() {
         $this->baseURL = $this->ReadPropertyString("IPAddress");
         $this->user = $this->ReadPropertyString("UserName");
         $this->password = $this->ReadPropertyString("UserPassword");
@@ -1791,7 +1791,7 @@ class UniFi extends IPSModule {
         $this->Logout();
     }
 
-    private function UpdateUniFiClientData() {
+    public function UpdateUniFiClientData() {
         $this->baseURL = $this->ReadPropertyString("IPAddress");
         $this->user = $this->ReadPropertyString("UserName");
         $this->password = $this->ReadPropertyString("UserPassword");

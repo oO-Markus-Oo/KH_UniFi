@@ -1605,25 +1605,6 @@ class UniFi extends IPSModule {
         return $this->ch;
     }
 
-     private function CreateCategoryByNameIdent($name, $Ident = '', $ParentID = 0, $pos = 0, $hidden = false) {
-        if ($Ident <> '') {
-            $Catid = IPS_GetObjectIDByIdent($Ident, $ParentID);
-        }
-        if ($Ident === '') {
-            $Catid = IPS_GetCategoryIDByName($name, $ParentID);
-        }
-
-        if ($Catid === false) {
-            $Catid = IPS_CreateCategory();
-            IPS_SetParent($Catid, $ParentID);
-            IPS_SetName($Catid, $name);
-            IPS_SetPosition($Catid, $pos);
-            IPS_SetHidden($Catid, $hidden);
-            IPS_SetInfo($Catid, "This category was created by: #" . $_IPS['SELF'] . "#");
-        }
-        return $Catid;
-    }
-
     private function maskUmlaute($text) {
         $text = str_replace("ä", "a", $text);
         $text = str_replace("Ä", "AE", $text);
@@ -1655,6 +1636,10 @@ class UniFi extends IPSModule {
             IPS_SetParent($cid, $id);
             IPS_SetName($cid, $name);
             IPS_SetIdent($cid, $this->maskUmlaute($ident));
+        }
+        else
+        {
+            IPS_SetName($cid, $name);
         }
         return $cid;
     }

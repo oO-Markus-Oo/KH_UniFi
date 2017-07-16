@@ -1715,7 +1715,6 @@ class UniFi extends IPSModule {
                 $catID = $this->CreateCategoryByNameIdent($client->hostname, $ident . "_name", $instance_Clients_ID);
                 $this->CreateVariable("MAC", 3, $client->mac, $ident . "_mac", $catID);
                 $this->CreateVariable("IP", 3, $client->ip, $ident . "_ip", $catID);
-                $this->CreateVariable("AP Name", 3, $apName, $ident . "_apname", $catID);
                 $this->CreateVariable("Signal", 1, $client->signal, $ident . "_signal", $catID);
                 $this->CreateVariable("Radio", 3, $client->radio, $ident . "_radio", $catID);
                 $this->CreateVariable("TX Bytes", 1, $client->tx_bytes, $ident . "_txbytes", $catID);

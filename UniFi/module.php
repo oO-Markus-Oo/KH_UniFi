@@ -51,10 +51,10 @@ class UniFi extends IPSModule {
         # init curl object and set session-wide options
         $this->ch = curl_init();
 
-        curl_setopt($ch, CURLOPT_HEADER, 1);
-        curl_setopt($ch, CURLOPT_REFERER, $this->baseurl.'/login');
-        curl_setopt($ch, CURLOPT_URL, $this->baseURL.'/api/login');
-        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode(['username' => $this->userName, 'password' => $this->userPassword]));
+        curl_setopt($this->ch, CURLOPT_HEADER, 1);
+        curl_setopt($this->ch, CURLOPT_REFERER, $this->baseurl.'/login');
+        curl_setopt($this->ch, CURLOPT_URL, $this->baseURL.'/api/login');
+        curl_setopt($this->ch, CURLOPT_POSTFIELDS, json_encode(['username' => $this->userName, 'password' => $this->userPassword]));
         curl_setopt($this->ch, CURLOPT_RETURNTRANSFER, TRUE);
         curl_setopt($this->ch, CURLOPT_SSL_VERIFYPEER, FALSE);
         curl_setopt($this->ch, CURLOPT_SSL_VERIFYHOST, FALSE);

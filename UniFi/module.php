@@ -82,7 +82,7 @@ class UniFi extends IPSModule {
         $body        = trim(substr($content, $header_size));
         $code        = curl_getinfo($this->ch, CURLINFO_HTTP_CODE);
 
-        curl_close ($this->ch);
+        //curl_close ($this->ch);
 
         preg_match_all('|Set-Cookie: (.*);|U', substr($content, 0, $header_size), $results);
         if (isset($results[1])) {

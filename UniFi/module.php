@@ -1719,10 +1719,10 @@ class UniFi extends IPSModule {
     }
 
     private function GetWLANclients($instance_Clients_ID) {
-        $clientList = $this->list_clients();
+        $clientList = $this->list_clients;
 
         if (is_object($clientList)) {
-            foreach ($clientList->data as $client) {
+            foreach ($clientList as $client) {              
                 $ident = str_replace(":", "", $client->mac);
                 $catID = $this->CreateCategoryByNameIdent($client->mac, $ident . "_name", $instance_Clients_ID);
                 //CreateVariable("MAC", 3, $client->mac, $ident . "_mac", $catID);

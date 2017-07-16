@@ -1712,6 +1712,10 @@ class UniFi extends IPSModule {
             foreach ($this->last_results_raw->data as $client) { 
                 if($client->is_wired === FALSE)
                 {
+                    if(!isset($client->name))
+                    {
+                        $client->name = $client->hostname;
+                    }
                     $ident = str_replace(":", "", $client->mac);
                     $catID = $this->CreateCategoryByIdent($instance_Clients_ID, $ident . "_name", $client->name);
                     $this->CreateVariable("MAC", 3, $client->mac, $ident . "_mac", $catID);

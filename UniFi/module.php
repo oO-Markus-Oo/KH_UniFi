@@ -1710,16 +1710,19 @@ class UniFi extends IPSModule {
         $clientList = $this->list_clients();
 
         if (is_object($this->last_results_raw)) {
-            foreach ($this->last_results_raw->data as $client) {              
-                $ident = str_replace(":", "", $client->mac);
-                $catID = $this->CreateCategoryByNameIdent($client->hostname, $ident . "_name", $instance_Clients_ID);
-                $this->CreateVariable("MAC", 3, $client->mac, $ident . "_mac", $catID);
-                $this->CreateVariable("IP", 3, $client->ip, $ident . "_ip", $catID);
-                $this->CreateVariable("Signal", 1, $client->signal, $ident . "_signal", $catID);
-                $this->CreateVariable("Radio", 3, $client->radio, $ident . "_radio", $catID);
-                $this->CreateVariable("TX Bytes", 1, $client->tx_bytes, $ident . "_txbytes", $catID);
-                $this->CreateVariable("RX Bytes", 1, $client->rx_bytes, $ident . "_rxbytes", $catID);
-                $this->CreateVariable("Uptime", 1, $client->uptime, $ident . "_uptime", $catID);
+            foreach ($this->last_results_raw->data as $client) { 
+                if($client->is_wired === FALSE)
+                {
+                    $ident = str_replace(":", "", $client->mac);
+                    $catID = $this->CreateCategoryByNameIdent($client->hostname, $ident . "_name", $instance_Clients_ID);
+                    $this->CreateVariable("MAC", 3, $client->mac, $ident . "_mac", $catID);
+                    $this->CreateVariable("IP", 3, $client->ip, $ident . "_ip", $catID);
+                    $this->CreateVariable("Signal", 1, $client->signal, $ident . "_signal", $catID);
+                    $this->CreateVariable("Radio", 3, $client->radio, $ident . "_radio", $catID);
+                    $this->CreateVariable("TX Bytes", 1, $client->tx_bytes, $ident . "_txbytes", $catID);
+                    $this->CreateVariable("RX Bytes", 1, $client->rx_bytes, $ident . "_rxbytes", $catID);
+                    $this->CreateVariable("Uptime", 1, $client->uptime, $ident . "_uptime", $catID);
+                }
             }
         }
     }

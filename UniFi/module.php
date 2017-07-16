@@ -63,7 +63,7 @@ class UniFi extends IPSModule {
         curl_setopt($this->ch, CURLOPT_SSLVERSION, 1); //set TLSv1 (SSLv3 is no longer supported)        
 
         if (($content = curl_exec($this->ch)) === false) {
-            error_log('cURL error: '.curl_error($ch));
+            error_log('cURL error: '.curl_error($this->ch));
         }
 
         if ($this->debug) {
@@ -1561,14 +1561,14 @@ class UniFi extends IPSModule {
             }
         }
 
-        if (($content = curl_exec($ch)) === false) {
-            error_log('cURL error: ' . curl_error($ch));
+        if (($content = curl_exec($this->ch)) === false) {
+            error_log('cURL error: ' . curl_error($this->ch));
         }
 
         if ($this->debug) {
             print '<pre>';
             print PHP_EOL . '---------cURL INFO-----------' . PHP_EOL;
-            print_r(curl_getinfo($ch));
+            print_r(curl_getinfo($this->ch));
             print PHP_EOL . '-------URL & PAYLOAD---------' . PHP_EOL;
             print $url . PHP_EOL;
             print $data;
@@ -1578,7 +1578,7 @@ class UniFi extends IPSModule {
             print '</pre>';
         }
 
-        curl_close($ch);
+        curl_close($this->ch);
         return $content;
     }
 

@@ -1718,7 +1718,7 @@ class UniFi extends IPSModule {
         }
         foreach ($this->ClientArray as $Client) 
         {
-            print_r($Client[]);
+            print_r($Client);
             //$varClientMAC = $Client[1];
             //$ident = str_replace(":", "", $varClientMAC);
             //$ident = str_replace("-", "", $ident);

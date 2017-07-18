@@ -1697,10 +1697,19 @@ class UniFi extends IPSModule {
             foreach ($this->last_results_raw->data as $client) { 
                 if($client->is_wired === FALSE)
                 {
-                    if(!isset($client->name))
+                    if(!isset($client->hostname) AND isset($client->name))
+                    {
+                        $client->hostname = $client->name;
+                    }
+                    if(!isset($client->name) AND isset($client->hostname))
                     {
                         $client->name = $client->hostname;
                     }
+                    if(!isset($client->name) AND !isset($client->hostname))
+                    {
+                        $client->name = $client->mac;
+                        $client->hostname = $client->mac;
+                    }   
                     $ident = str_replace(":", "", $client->mac);
                     $ident = str_replace("-", "", $ident);
                     $this->ClientArrayOnline[] = $ident;
@@ -1738,10 +1747,19 @@ class UniFi extends IPSModule {
             foreach ($this->last_results_raw->data as $client) { 
                 if($client->is_wired === TRUE)
                 {
-                    if(!isset($client->name))
+                    if(!isset($client->hostname) AND isset($client->name))
+                    {
+                        $client->hostname = $client->name;
+                    }
+                    if(!isset($client->name) AND isset($client->hostname))
                     {
                         $client->name = $client->hostname;
                     }
+                    if(!isset($client->name) AND !isset($client->hostname))
+                    {
+                        $client->name = $client->mac;
+                        $client->hostname = $client->mac;
+                    }                    
                     $ident = str_replace(":", "", $client->mac);
                     $ident = str_replace("-", "", $ident);
                     $this->ClientArrayOnline[] = $ident;
@@ -1749,8 +1767,6 @@ class UniFi extends IPSModule {
                     $this->CreateVariable("MAC", 3, $client->mac, $ident . "_mac", $catID);
                     $this->CreateVariable("IP", 3, $client->ip, $ident . "_ip", $catID);
                     $this->CreateVariable("Hostname", 3, $client->hostname, $ident . "_hostname", $catID);
-                    $this->CreateVariable("TX Bytes", 1, $client->tx_bytes, $ident . "_txbytes", $catID);
-                    $this->CreateVariable("RX Bytes", 1, $client->rx_bytes, $ident . "_rxbytes", $catID);
                     $this->CreateVariable("Uptime", 1, $client->uptime, $ident . "_uptime", $catID);
                 }
             }

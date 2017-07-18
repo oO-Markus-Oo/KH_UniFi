@@ -1717,9 +1717,9 @@ class UniFi extends IPSModule {
             }
         }
         
-        foreach($this->ClientArray as $i => $item) {
-            echo $this->ClientArray[$i]['varPresentVarID'];
-            echo $this->ClientArray[$i]['varDeviceMAC'];
+        foreach($this->ClientArray as $obj) {
+            echo $obj->varPresentVarID;
+            echo $obj->varDeviceMAC;
 
             // $array[$i] is same as $item
         }        

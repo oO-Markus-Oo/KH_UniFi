@@ -1716,12 +1716,12 @@ class UniFi extends IPSModule {
                 }
             }
         }
-        /*foreach ($this->ClientArray as $key => $entry) {
-            if ($entry["MAC"] == $client->mac) {
-                $clientName = $entry["Name"];
-                break;
-            }
-        }*/
+        foreach ($this->ClientArray as $Client) 
+        {
+            $ident = str_replace(":", "", $Client["varDeviceMAC"]);
+            $ident = str_replace("-", "", $ident);
+            echo $ident;
+        }
         print_r($this->ClientArray);
     }
 

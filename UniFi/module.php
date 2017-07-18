@@ -1731,6 +1731,45 @@ class UniFi extends IPSModule {
         }        
     }
 
+    private function GetLANclients($instance_Clients_ID, $instance_Clients_Presence_ID) {
+        $clientList = $this->list_clients();
+
+        if (is_object($this->last_results_raw)) {
+            foreach ($this->last_results_raw->data as $client) { 
+                if($client->is_wired === TRUE)
+                {
+                    if(!isset($client->name))
+                    {
+                        $client->name = $client->hostname;
+                    }
+                    $ident = str_replace(":", "", $client->mac);
+                    $ident = str_replace("-", "", $ident);
+                    $this->ClientArrayOnline[] = $ident;
+                    $catID = $this->CreateCategoryByIdent($instance_Clients_ID, $ident . "_name", $client->name);
+                    $this->CreateVariable("MAC", 3, $client->mac, $ident . "_mac", $catID);
+                    $this->CreateVariable("IP", 3, $client->ip, $ident . "_ip", $catID);
+                    $this->CreateVariable("Hostname", 3, $client->hostname, $ident . "_hostname", $catID);
+                    $this->CreateVariable("TX Bytes", 1, $client->tx_bytes, $ident . "_txbytes", $catID);
+                    $this->CreateVariable("RX Bytes", 1, $client->rx_bytes, $ident . "_rxbytes", $catID);
+                    $this->CreateVariable("Uptime", 1, $client->uptime, $ident . "_uptime", $catID);
+                }
+            }
+        }
+        
+        foreach($this->ClientArray as $obj) {
+            $varClientMAC = str_replace(":", "", $obj->varDeviceMAC);
+            $varClientMAC = str_replace("-", "", $varClientMAC);
+            
+            if (in_array($varClientMAC, $this->ClientArrayOnline, TRUE))
+            {
+                $varOnlineID = $this->CreateVariable($obj->varDeviceName, 0, TRUE, $varClientMAC . "_presence", $instance_Clients_Presence_ID);
+            }
+            else
+                $varOnlineID = $this->CreateVariable($obj->varDeviceName, 0, FALSE, $varClientMAC . "_presence", $instance_Clients_Presence_ID);
+
+        }        
+    }    
+
     private function GetWLANnetworks($instance_WLAN_ID) {
         $wlanList = $this->list_wlanconf();
 
@@ -1767,7 +1806,8 @@ class UniFi extends IPSModule {
         $instance_Clients_ID = $this->CreateCategoryByIdent($instance_id_parent, "Clients", "Clients");
         $instance_WLAN_ID = $this->CreateCategoryByIdent($instance_id_parent, "WLAN", "WLAN");
 
-        $this->GetWLANnetworks($instance_WLAN_ID);
+        $this->UpdateUniFiNetworkData();
+        $this->UpdateUniFiClientData();
         #$updateClientsScript = file_get_contents(__DIR__ . "/createClientList.php");
         #$updateClientsScriptID = $this->RegisterScript("updateClients", "updateClients", $updateClientsScript);
         #IPS_SetScriptTimer($updateClientsScriptID, $this->checkInterval);
@@ -1813,9 +1853,11 @@ class UniFi extends IPSModule {
         $instance_id_parent = $this->InstanceID;
         $instance_Clients_ID = $this->CreateCategoryByIdent($instance_id_parent, "Clients", "Clients");
         $instance_Clients_Wireless_ID = $this->CreateCategoryByIdent($instance_Clients_ID, "Wireless", "Wireless");
+        $instance_Clients_LAN_ID = $this->CreateCategoryByIdent($instance_Clients_ID, "LAN", "LAN");
         $instance_Clients_Presence_ID = $this->CreateCategoryByIdent($instance_Clients_ID, "Presence", "Presence");
 
         $this->GetWLANclients($instance_Clients_Wireless_ID, $instance_Clients_Presence_ID);
+        $this->GetLANclients($instance_Clients_LAN_ID, $instance_Clients_Presence_ID);
         $this->Logout();
     }
 

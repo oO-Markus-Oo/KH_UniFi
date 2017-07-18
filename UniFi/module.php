@@ -1716,15 +1716,13 @@ class UniFi extends IPSModule {
                 }
             }
         }
-        foreach ($this->ClientArray as $Client) 
-        {
-            print_r($Client);
-            //$varClientMAC = $Client[1];
-            //$ident = str_replace(":", "", $varClientMAC);
-            //$ident = str_replace("-", "", $ident);
-            echo $ident;
-        }
-        print_r($this->ClientArray);
+        
+        foreach($this->ClientArray as $i => $item) {
+            echo $this->ClientArray[$i]['varPresentVarID'];
+            echo $this->ClientArray[$i]['varDeviceMAC'];
+
+            // $array[$i] is same as $item
+        }        
     }
 
     private function GetWLANnetworks($instance_WLAN_ID) {

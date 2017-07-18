@@ -1870,7 +1870,7 @@ class UniFi extends IPSModule {
         $instance_Clients_ID = $this->CreateCategoryByIdent($instance_id_parent, "Clients", "Clients");
         $instance_Clients_Wireless_ID = $this->CreateCategoryByIdent($instance_Clients_ID, "Wireless", "Wireless");
         $instance_Clients_LAN_ID = $this->CreateCategoryByIdent($instance_Clients_ID, "LAN", "LAN");
-        $instance_Clients_Presence_ID = $this->CreateCategoryByIdent($instance_Clients_ID, "Presence", "Presence");
+        $instance_Clients_Presence_ID = $this->CreateCategoryByIdent($instance_Clients_ID, "_Presence", "Presence");
 
         $this->GetWLANclients($instance_Clients_Wireless_ID, $instance_Clients_Presence_ID);
         $this->GetLANclients($instance_Clients_LAN_ID, $instance_Clients_Presence_ID);

@@ -1702,6 +1702,9 @@ class UniFi extends IPSModule {
                         $client->name = $client->hostname;
                     }
                     $ident = str_replace(":", "", $client->mac);
+                    $ident = str_replace("-", "", $ident);
+                    print_r($this->ClientArray);
+                    
                     $catID = $this->CreateCategoryByIdent($instance_Clients_ID, $ident . "_name", $client->name);
                     $this->CreateVariable("MAC", 3, $client->mac, $ident . "_mac", $catID);
                     $this->CreateVariable("IP", 3, $client->ip, $ident . "_ip", $catID);
@@ -1791,6 +1794,7 @@ class UniFi extends IPSModule {
         $this->checkIntervalNetwork = $this->ReadPropertyInteger("Intervall_Network");
         $this->checkIntervalClient = $this->ReadPropertyInteger("Intervall_Client");
         $this->debug = $this->ReadPropertyBoolean("Debug");
+        $this->ClientArray = json_decode($this->ReadPropertyString("Clients"));
         $this->Login();
 
         # create neccessary folders

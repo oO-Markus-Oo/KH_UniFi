@@ -1722,9 +1722,10 @@ class UniFi extends IPSModule {
             $varClientMAC = str_replace("-", "", $varClientMAC);
             if (in_array($varClientMAC, $this->ClientArrayOnline, TRUE))
             {
-                echo "Match found: ".$varClientMAC."<br>";
+                $this->SetValueBoolean($obj->varPresentVarID, TRUE);
             }
-            echo $varClientMAC;
+            else
+                $this->SetValueBoolean($obj->varPresentVarID, FALSE);
 
             // $array[$i] is same as $item
         }        

@@ -1703,8 +1703,7 @@ class UniFi extends IPSModule {
                     }
                     $ident = str_replace(":", "", $client->mac);
                     $ident = str_replace("-", "", $ident);
-                    print_r($this->ClientArray);
-                    
+                    $this->ClientArrayOnline[] = $ident;
                     $catID = $this->CreateCategoryByIdent($instance_Clients_ID, $ident . "_name", $client->name);
                     $this->CreateVariable("MAC", 3, $client->mac, $ident . "_mac", $catID);
                     $this->CreateVariable("IP", 3, $client->ip, $ident . "_ip", $catID);
@@ -1717,6 +1716,7 @@ class UniFi extends IPSModule {
                 }
             }
         }
+        print_r($this->ClientArrayOnline);
     }
 
     private function GetWLANnetworks($instance_WLAN_ID) {

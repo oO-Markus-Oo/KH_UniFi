@@ -1690,7 +1690,7 @@ class UniFi extends IPSModule {
         $this->SetVariable($VarID, $Type, $Value);
     }
 
-    private function GetWLANclients($instance_Clients_ID) {
+    private function GetWLANclients($instance_Clients_ID, $instance_Clients_Presence_ID) {
         $clientList = $this->list_clients();
 
         if (is_object($this->last_results_raw)) {
@@ -1720,14 +1720,14 @@ class UniFi extends IPSModule {
         foreach($this->ClientArray as $obj) {
             $varClientMAC = str_replace(":", "", $obj->varDeviceMAC);
             $varClientMAC = str_replace("-", "", $varClientMAC);
+            
             if (in_array($varClientMAC, $this->ClientArrayOnline, TRUE))
             {
-                $this->SetValueBoolean($obj->varPresentVarID, TRUE);
+                $varOnlineID = $this->CreateVariable($obj->varDeviceName, 0, TRUE, $varClientMAC . "_presence", $instance_Clients_Presence_ID);
             }
             else
-                SetValueBoolean($obj->varPresentVarID, FALSE);
+                $varOnlineID = $this->CreateVariable($obj->varDeviceName, 0, FALSE, $varClientMAC . "_presence", $instance_Clients_Presence_ID);
 
-            // $array[$i] is same as $item
         }        
     }
 
@@ -1813,8 +1813,9 @@ class UniFi extends IPSModule {
         $instance_id_parent = $this->InstanceID;
         $instance_Clients_ID = $this->CreateCategoryByIdent($instance_id_parent, "Clients", "Clients");
         $instance_Clients_Wireless_ID = $this->CreateCategoryByIdent($instance_Clients_ID, "Wireless", "Wireless");
+        $instance_Clients_Presence_ID = $this->CreateCategoryByIdent($instance_Clients_ID, "Presence", "Presence");
 
-        $this->GetWLANclients($instance_Clients_Wireless_ID);
+        $this->GetWLANclients($instance_Clients_Wireless_ID, $instance_Clients_Presence_ID);
         $this->Logout();
     }
 

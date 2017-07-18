@@ -1813,7 +1813,6 @@ class UniFi extends IPSModule {
         $this->checkIntervalClient = $this->ReadPropertyInteger("Intervall_Client");
         $this->debug = $this->ReadPropertyBoolean("Debug");
 
-        $this->RegisterVariableString("ClientHTMLBox", "ClientHTMLBox", "~HTMLBox");
         $this->SetTimerInterval("Intervall_Network", ($this->ReadPropertyInteger("Intervall_Network") * 1000));
         $this->SetTimerInterval("Intervall_Client", ($this->ReadPropertyInteger("Intervall_Client") * 1000));
 
@@ -1824,14 +1823,6 @@ class UniFi extends IPSModule {
 
         $this->UpdateUniFiNetworkData();
         $this->UpdateUniFiClientData();
-        #$updateClientsScript = file_get_contents(__DIR__ . "/createClientList.php");
-        #$updateClientsScriptID = $this->RegisterScript("updateClients", "updateClients", $updateClientsScript);
-        #IPS_SetScriptTimer($updateClientsScriptID, $this->checkInterval);
-        #$updateWLANScript = file_get_contents(__DIR__ . "/createWLANList.php");
-        #$updateWLANScriptID = $this->RegisterScript("updateWLAN", "updateWLAN", $updateWLANScript);
-        #IPS_SetScriptTimer($updateWLANScriptID, $this->checkInterval);
-        #$setWLANScript = file_get_contents(__DIR__ . "/setWLAN.php");
-        #$this->RegisterScript("setWLAN", "setWLAN", $setWLANScript);
     }
 
     public function UpdateUniFiNetworkData() {

@@ -1725,7 +1725,7 @@ class UniFi extends IPSModule {
                 $this->SetValueBoolean($obj->varPresentVarID, TRUE);
             }
             else
-                $this->SetValueBoolean($obj->varPresentVarID, FALSE);
+                SetValueBoolean($obj->varPresentVarID, FALSE);
 
             // $array[$i] is same as $item
         }        

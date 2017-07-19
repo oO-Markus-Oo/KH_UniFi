@@ -1,6 +1,7 @@
 <?
+
 define('__ROOT__', dirname(dirname(__FILE__)));
-require_once (__ROOT__.'/libs/class.unifi.php');
+require_once (__ROOT__ . '/libs/class.unifi.php');
 
 class UniFi extends IPSModule {
 
@@ -49,9 +50,7 @@ class UniFi extends IPSModule {
             IPS_SetParent($cid, $id);
             IPS_SetName($cid, $name);
             IPS_SetIdent($cid, $this->maskUmlaute($ident));
-        }
-        else
-        {
+        } else {
             IPS_SetName($cid, $name);
         }
         return $cid;
@@ -107,22 +106,18 @@ class UniFi extends IPSModule {
         $clientList = $this->list_clients();
 
         if (is_object($this->last_results_raw)) {
-            foreach ($this->last_results_raw->data as $client) { 
-                if($client->is_wired === FALSE)
-                {
-                    if(!isset($client->hostname) AND isset($client->name))
-                    {
+            foreach ($this->last_results_raw->data as $client) {
+                if ($client->is_wired === FALSE) {
+                    if (!isset($client->hostname) AND isset($client->name)) {
                         $client->hostname = $client->name;
                     }
-                    if(!isset($client->name) AND isset($client->hostname))
-                    {
+                    if (!isset($client->name) AND isset($client->hostname)) {
                         $client->name = $client->hostname;
                     }
-                    if(!isset($client->name) AND !isset($client->hostname))
-                    {
+                    if (!isset($client->name) AND ! isset($client->hostname)) {
                         $client->name = $client->mac;
                         $client->hostname = $client->mac;
-                    }   
+                    }
                     $ident = str_replace(":", "", $client->mac);
                     $ident = str_replace("-", "", $ident);
                     $this->ClientArrayOnline[] = $ident;
@@ -138,41 +133,34 @@ class UniFi extends IPSModule {
                 }
             }
         }
-        
-        foreach($this->ClientArray as $obj) {
+
+        foreach ($this->ClientArray as $obj) {
             $varClientMAC = str_replace(":", "", $obj->varDeviceMAC);
             $varClientMAC = str_replace("-", "", $varClientMAC);
-            
-            if (in_array($varClientMAC, $this->ClientArrayOnline, TRUE))
-            {
-                $varOnlineID = $this->CreateVariable($obj->varDeviceName, 0, TRUE, $varClientMAC . "_presence", $instance_Clients_Presence_ID);
-            }
-            else
-                $varOnlineID = $this->CreateVariable($obj->varDeviceName, 0, FALSE, $varClientMAC . "_presence", $instance_Clients_Presence_ID);
 
-        }        
+            if (in_array($varClientMAC, $this->ClientArrayOnline, TRUE)) {
+                $varOnlineID = $this->CreateVariable($obj->varDeviceName, 0, TRUE, $varClientMAC . "_presence", $instance_Clients_Presence_ID);
+            } else
+                $varOnlineID = $this->CreateVariable($obj->varDeviceName, 0, FALSE, $varClientMAC . "_presence", $instance_Clients_Presence_ID);
+        }
     }
 
     private function GetLANclients($instance_Clients_ID, $instance_Clients_Presence_ID) {
         $clientList = $this->list_clients();
 
         if (is_object($this->last_results_raw)) {
-            foreach ($this->last_results_raw->data as $client) { 
-                if($client->is_wired === TRUE)
-                {
-                    if(!isset($client->hostname) AND isset($client->name))
-                    {
+            foreach ($this->last_results_raw->data as $client) {
+                if ($client->is_wired === TRUE) {
+                    if (!isset($client->hostname) AND isset($client->name)) {
                         $client->hostname = $client->name;
                     }
-                    if(!isset($client->name) AND isset($client->hostname))
-                    {
+                    if (!isset($client->name) AND isset($client->hostname)) {
                         $client->name = $client->hostname;
                     }
-                    if(!isset($client->name) AND !isset($client->hostname))
-                    {
+                    if (!isset($client->name) AND ! isset($client->hostname)) {
                         $client->name = $client->mac;
                         $client->hostname = $client->mac;
-                    }                    
+                    }
                     $ident = str_replace(":", "", $client->mac);
                     $ident = str_replace("-", "", $ident);
                     $this->ClientArrayOnline[] = $ident;
@@ -184,20 +172,17 @@ class UniFi extends IPSModule {
                 }
             }
         }
-        
-        foreach($this->ClientArray as $obj) {
+
+        foreach ($this->ClientArray as $obj) {
             $varClientMAC = str_replace(":", "", $obj->varDeviceMAC);
             $varClientMAC = str_replace("-", "", $varClientMAC);
-            
-            if (in_array($varClientMAC, $this->ClientArrayOnline, TRUE))
-            {
-                $varOnlineID = $this->CreateVariable($obj->varDeviceName, 0, TRUE, $varClientMAC . "_presence", $instance_Clients_Presence_ID);
-            }
-            else
-                $varOnlineID = $this->CreateVariable($obj->varDeviceName, 0, FALSE, $varClientMAC . "_presence", $instance_Clients_Presence_ID);
 
-        }        
-    }    
+            if (in_array($varClientMAC, $this->ClientArrayOnline, TRUE)) {
+                $varOnlineID = $this->CreateVariable($obj->varDeviceName, 0, TRUE, $varClientMAC . "_presence", $instance_Clients_Presence_ID);
+            } else
+                $varOnlineID = $this->CreateVariable($obj->varDeviceName, 0, FALSE, $varClientMAC . "_presence", $instance_Clients_Presence_ID);
+        }
+    }
 
     private function GetWLANnetworks($instance_WLAN_ID) {
         $wlanList = $this->list_wlanconf();
@@ -210,7 +195,7 @@ class UniFi extends IPSModule {
                 $this->CreateVariable("Enabled", 0, $wlan->enabled, $ident . "_enabled", $catID);
                 $this->CreateVariable("Security", 3, $wlan->security, $ident . "_security", $catID);
             }
-        }       
+        }
     }
 
     public function ApplyChanges() {
@@ -282,5 +267,4 @@ class UniFi extends IPSModule {
     }
 
 }
-
 ?>

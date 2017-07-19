@@ -1,6 +1,6 @@
 <?
 define('__ROOT__', dirname(dirname(__FILE__)));
-require_once (__ROOT__.'/UniFi/libs/class.unifi.php');
+require_once (__ROOT__.'/libs/class.unifi.php');
 
 class UniFi extends IPSModule {
 

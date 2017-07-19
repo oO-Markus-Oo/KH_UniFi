@@ -1,6 +1,4 @@
 <?php
-class UniFi extends IPSModule 
-{
     /**
      * Login to UniFi Controller
      */
@@ -1565,5 +1563,4 @@ class UniFi extends IPSModule
 
         return $this->ch;
     }
-}
 ?>

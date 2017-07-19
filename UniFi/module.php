@@ -2,7 +2,7 @@
 define('__ROOT__', dirname(dirname(__FILE__)));
 require_once (__ROOT__ . '/libs/class.unifi.php');
 
-class UniFi extends UniFiApi {
+class UniFi extends IPSModule {
     /**
      * public properties
      */

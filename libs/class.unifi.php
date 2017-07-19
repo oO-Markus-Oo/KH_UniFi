@@ -1,5 +1,5 @@
 <?php
-class UniFiApi extends IPSModule 
+class UniFi extends IPSModule 
 {
     /**
      * Login to UniFi Controller

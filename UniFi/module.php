@@ -1727,24 +1727,7 @@ class UniFi extends IPSModule {
                     $this->CreateVariable("Uptime", 1, $client->uptime, $ident . "_uptime", $catID);
                 }
             }
-        }
-        
-        foreach($this->ClientArray as $obj) {
-            $varClientMAC = str_replace(":", "", $obj->varDeviceMAC);
-            $varClientMAC = str_replace("-", "", $varClientMAC);
-            
-            if (property_exists($this, 'ClientArrayOnline'))
-            {
-                if (in_array($varClientMAC, $this->ClientArrayOnline, TRUE))
-                {
-                    $varOnlineID = $this->CreateVariable($obj->varDeviceName, 0, TRUE, $varClientMAC . "_presence", $instance_Clients_Presence_ID);
-                }
-                else
-                {
-                    $varOnlineID = $this->CreateVariable($obj->varDeviceName, 0, FALSE, $varClientMAC . "_presence", $instance_Clients_Presence_ID);
-                }
-            }
-        }        
+        }       
     }
 
     private function GetLANclients($instance_Clients_ID, $instance_Clients_Presence_ID) {
@@ -1783,8 +1766,13 @@ class UniFi extends IPSModule {
                         $this->CreateVariable("Uptime", 1, $client->uptime, $ident . "_uptime", $catID);
                     }
                 }
-            }
+            }       
+        }  
+}
 
+    private function CheckPresence() {
+        if ($this->is_loggedin == true)
+        {
             foreach($this->ClientArray as $obj) {
                 $varClientMAC = str_replace(":", "", $obj->varDeviceMAC);
                 $varClientMAC = str_replace("-", "", $varClientMAC);
@@ -1797,9 +1785,9 @@ class UniFi extends IPSModule {
                     else
                         $varOnlineID = $this->CreateVariable($obj->varDeviceName, 0, FALSE, $varClientMAC . "_presence", $instance_Clients_Presence_ID);
                 }
-            }        
-        }  
-}
+            }
+        }
+    }
 
     private function GetWLANnetworks($instance_WLAN_ID) {
         if ($this->is_loggedin == true)
@@ -1883,6 +1871,7 @@ class UniFi extends IPSModule {
 
         $this->GetWLANclients($instance_Clients_Wireless_ID, $instance_Clients_Presence_ID);
         $this->GetLANclients($instance_Clients_LAN_ID, $instance_Clients_Presence_ID);
+        $this->CheckPresence();
         $this->Logout();
     }
 

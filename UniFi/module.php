@@ -1744,11 +1744,6 @@ class UniFi extends IPSModule {
                     $varOnlineID = $this->CreateVariable($obj->varDeviceName, 0, FALSE, $varClientMAC . "_presence", $instance_Clients_Presence_ID);
                 }
             }
-            else
-            {
-                $this->SetStatus(202);// login error
-            }
-
         }        
     }
 
@@ -1802,8 +1797,6 @@ class UniFi extends IPSModule {
                     else
                         $varOnlineID = $this->CreateVariable($obj->varDeviceName, 0, FALSE, $varClientMAC . "_presence", $instance_Clients_Presence_ID);
                 }
-                else
-                    $this->SetStatus(202);// login error
             }        
         }  
 }

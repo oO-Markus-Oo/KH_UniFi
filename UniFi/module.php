@@ -1773,17 +1773,20 @@ class UniFi extends IPSModule {
     private function CheckPresence($instance_Clients_Presence_ID) {
         if ($this->is_loggedin == true)
         {
-            foreach($this->ClientArray as $obj) {
-                $varClientMAC = str_replace(":", "", $obj->varDeviceMAC);
-                $varClientMAC = str_replace("-", "", $varClientMAC);
-                if (property_exists($this, 'ClientArrayOnline'))
-                {
-                    if (in_array($varClientMAC, $this->ClientArrayOnline, TRUE))
+            if (count($this->ClientArray) != 0)
+            {
+                foreach($this->ClientArray as $obj) {
+                    $varClientMAC = str_replace(":", "", $obj->varDeviceMAC);
+                    $varClientMAC = str_replace("-", "", $varClientMAC);
+                    if (property_exists($this, 'ClientArrayOnline'))
                     {
-                        $varOnlineID = $this->CreateVariable($obj->varDeviceName, 0, TRUE, $varClientMAC . "_presence", $instance_Clients_Presence_ID);
+                        if (in_array($varClientMAC, $this->ClientArrayOnline, TRUE))
+                        {
+                            $varOnlineID = $this->CreateVariable($obj->varDeviceName, 0, TRUE, $varClientMAC . "_presence", $instance_Clients_Presence_ID);
+                        }
+                        else
+                            $varOnlineID = $this->CreateVariable($obj->varDeviceName, 0, FALSE, $varClientMAC . "_presence", $instance_Clients_Presence_ID);
                     }
-                    else
-                        $varOnlineID = $this->CreateVariable($obj->varDeviceName, 0, FALSE, $varClientMAC . "_presence", $instance_Clients_Presence_ID);
                 }
             }
         }

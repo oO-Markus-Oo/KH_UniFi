@@ -1770,7 +1770,7 @@ class UniFi extends IPSModule {
         }  
 }
 
-    private function CheckPresence() {
+    private function CheckPresence($instance_Clients_Presence_ID) {
         if ($this->is_loggedin == true)
         {
             foreach($this->ClientArray as $obj) {
@@ -1871,7 +1871,7 @@ class UniFi extends IPSModule {
 
         $this->GetWLANclients($instance_Clients_Wireless_ID, $instance_Clients_Presence_ID);
         $this->GetLANclients($instance_Clients_LAN_ID, $instance_Clients_Presence_ID);
-        $this->CheckPresence();
+        $this->CheckPresence($instance_Clients_Presence_ID);
         $this->Logout();
     }
 

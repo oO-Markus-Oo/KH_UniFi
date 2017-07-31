@@ -2,12 +2,12 @@
 	"elements":
 	[
 		{ "name": "IPAddress",        "type": "ValidationTextBox", "caption": "IP-Address/Host" },
-		{ "name": "UserName",         "type": "ValidationTextBox", "caption": "Benutzername" },
+		{ "name": "UserName",         "type": "ValidationTextBox", "caption": "Username" },
 		{ "name": "UserPassword",     "type": "PasswordTextBox", "caption": "Password" },
                 { "name": "Site",             "type": "ValidationTextBox", "caption": "UniFi Site" },
-                { "name": "Intervall_Network",        "type": "IntervalBox", "caption": "Update Netzwerke (s)" },
-                { "name": "Intervall_Client",         "type": "IntervalBox", "caption": "Update Clients (s)" },
-                { "name": "Debug",            "type": "CheckBox",  "caption": "Debug Modus" },
+                { "name": "Intervall_Network",        "type": "IntervalBox", "caption": "Network Update (s)" },
+                { "name": "Intervall_Client",         "type": "IntervalBox", "caption": "Client Update (s)" },
+                { "name": "Debug",            "type": "CheckBox",  "caption": "Debug Mode" },
 		{
 			"type": "List",
 			"name": "Clients",
@@ -21,7 +21,7 @@
 			},
 			"columns": [
 				{
-					"label": "Gerätename",
+					"label": "Devicename",
 					"name": "varDeviceName", 
 					"width": "120px",
 					"add": "Name",
@@ -41,5 +41,12 @@
 			"values": [
 			]
 		}
-	]	
+	],
+	"status":
+        [
+            { "code": 101, "icon": "active", "caption": "status unknown" },
+            { "code": 102, "icon": "active", "caption": "Login information valid" },
+            { "code": 201, "icon": "error", "caption": "Authentication failed, recheck Username and Password" },
+            { "code": 202, "icon": "error", "caption": "ERROR: connection not established, recheck IP and Port" }
+        ]        
 }

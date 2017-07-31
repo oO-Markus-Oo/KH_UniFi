@@ -1744,67 +1744,73 @@ class UniFi extends IPSModule {
     }
 
     private function GetLANclients($instance_Clients_ID, $instance_Clients_Presence_ID) {
-        $clientList = $this->list_clients();
+        if ($this->is_loggedin == true)
+        {        
+            $clientList = $this->list_clients();
 
-        if (is_object($this->last_results_raw)) {
-            foreach ($this->last_results_raw->data as $client) { 
-                if($client->is_wired === TRUE)
-                {
-                    if(!isset($client->hostname) AND isset($client->name))
+            if (is_object($this->last_results_raw)) {
+                foreach ($this->last_results_raw->data as $client) { 
+                    if($client->is_wired === TRUE)
                     {
-                        $client->hostname = $client->name;
+                        if(!isset($client->hostname) AND isset($client->name))
+                        {
+                            $client->hostname = $client->name;
+                        }
+                        if(!isset($client->name) AND isset($client->hostname))
+                        {
+                            $client->name = $client->hostname;
+                        }
+                        if(!isset($client->name) AND !isset($client->hostname))
+                        {
+                            $client->name = $client->mac;
+                            $client->hostname = $client->mac;
+                        }
+                        if(!isset($client->ip))
+                        {
+                            $client->ip = "0.0.0.0";
+                        }                    
+                        $ident = str_replace(":", "", $client->mac);
+                        $ident = str_replace("-", "", $ident);
+                        $this->ClientArrayOnline[] = $ident;
+                        $catID = $this->CreateCategoryByIdent($instance_Clients_ID, $ident . "_name", $client->name);
+                        $this->CreateVariable("MAC", 3, $client->mac, $ident . "_mac", $catID);
+                        $this->CreateVariable("IP", 3, $client->ip, $ident . "_ip", $catID);
+                        $this->CreateVariable("Hostname", 3, $client->hostname, $ident . "_hostname", $catID);
+                        $this->CreateVariable("Uptime", 1, $client->uptime, $ident . "_uptime", $catID);
                     }
-                    if(!isset($client->name) AND isset($client->hostname))
-                    {
-                        $client->name = $client->hostname;
-                    }
-                    if(!isset($client->name) AND !isset($client->hostname))
-                    {
-                        $client->name = $client->mac;
-                        $client->hostname = $client->mac;
-                    }
-                    if(!isset($client->ip))
-                    {
-                        $client->ip = "0.0.0.0";
-                    }                    
-                    $ident = str_replace(":", "", $client->mac);
-                    $ident = str_replace("-", "", $ident);
-                    $this->ClientArrayOnline[] = $ident;
-                    $catID = $this->CreateCategoryByIdent($instance_Clients_ID, $ident . "_name", $client->name);
-                    $this->CreateVariable("MAC", 3, $client->mac, $ident . "_mac", $catID);
-                    $this->CreateVariable("IP", 3, $client->ip, $ident . "_ip", $catID);
-                    $this->CreateVariable("Hostname", 3, $client->hostname, $ident . "_hostname", $catID);
-                    $this->CreateVariable("Uptime", 1, $client->uptime, $ident . "_uptime", $catID);
                 }
             }
-        }
-        
-        foreach($this->ClientArray as $obj) {
-            $varClientMAC = str_replace(":", "", $obj->varDeviceMAC);
-            $varClientMAC = str_replace("-", "", $varClientMAC);
-            
-            if (in_array($varClientMAC, $this->ClientArrayOnline, TRUE))
-            {
-                $varOnlineID = $this->CreateVariable($obj->varDeviceName, 0, TRUE, $varClientMAC . "_presence", $instance_Clients_Presence_ID);
-            }
-            else
-                $varOnlineID = $this->CreateVariable($obj->varDeviceName, 0, FALSE, $varClientMAC . "_presence", $instance_Clients_Presence_ID);
 
-        }        
-    }    
+            foreach($this->ClientArray as $obj) {
+                $varClientMAC = str_replace(":", "", $obj->varDeviceMAC);
+                $varClientMAC = str_replace("-", "", $varClientMAC);
+
+                if (in_array($varClientMAC, $this->ClientArrayOnline, TRUE))
+                {
+                    $varOnlineID = $this->CreateVariable($obj->varDeviceName, 0, TRUE, $varClientMAC . "_presence", $instance_Clients_Presence_ID);
+                }
+                else
+                    $varOnlineID = $this->CreateVariable($obj->varDeviceName, 0, FALSE, $varClientMAC . "_presence", $instance_Clients_Presence_ID);
+
+            }        
+        }  
+}
 
     private function GetWLANnetworks($instance_WLAN_ID) {
-        $wlanList = $this->list_wlanconf();
+        if ($this->is_loggedin == true)
+        {
+            $wlanList = $this->list_wlanconf();
 
-        if (is_object($this->last_results_raw)) {
-            foreach ($this->last_results_raw->data as $wlan) {
-                $ident = $wlan->_id;
-                $catID = $this->CreateCategoryByIdent($instance_WLAN_ID, $ident, $wlan->name);
-                $this->CreateVariable("ID", 3, $wlan->_id, $ident . "_id", $catID);
-                $this->CreateVariable("Enabled", 0, $wlan->enabled, $ident . "_enabled", $catID);
-                $this->CreateVariable("Security", 3, $wlan->security, $ident . "_security", $catID);
-            }
-        }       
+            if (is_object($this->last_results_raw)) {
+                foreach ($this->last_results_raw->data as $wlan) {
+                    $ident = $wlan->_id;
+                    $catID = $this->CreateCategoryByIdent($instance_WLAN_ID, $ident, $wlan->name);
+                    $this->CreateVariable("ID", 3, $wlan->_id, $ident . "_id", $catID);
+                    $this->CreateVariable("Enabled", 0, $wlan->enabled, $ident . "_enabled", $catID);
+                    $this->CreateVariable("Security", 3, $wlan->security, $ident . "_security", $catID);
+                }
+            } 
+        }
     }
 
     public function ApplyChanges() {

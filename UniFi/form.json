@@ -46,7 +46,7 @@
         [
             { "code": 101, "icon": "active", "caption": "status unknown" },
             { "code": 102, "icon": "active", "caption": "Login information valid" },
-            { "code": 201, "icon": "error", "caption": "Authentication failed" },
-            { "code": 202, "icon": "error", "caption": "ERROR" }
+            { "code": 201, "icon": "error", "caption": "Authentication failed, recheck Username and Password" },
+            { "code": 202, "icon": "error", "caption": "ERROR: connection not established, recheck IP and Port" }
         ]        
 }

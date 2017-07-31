@@ -1733,12 +1733,21 @@ class UniFi extends IPSModule {
             $varClientMAC = str_replace(":", "", $obj->varDeviceMAC);
             $varClientMAC = str_replace("-", "", $varClientMAC);
             
-            if (in_array($varClientMAC, $this->ClientArrayOnline, TRUE))
+            if (is_array($varClientMAC))
             {
-                $varOnlineID = $this->CreateVariable($obj->varDeviceName, 0, TRUE, $varClientMAC . "_presence", $instance_Clients_Presence_ID);
+                if (in_array($varClientMAC, $this->ClientArrayOnline, TRUE))
+                {
+                    $varOnlineID = $this->CreateVariable($obj->varDeviceName, 0, TRUE, $varClientMAC . "_presence", $instance_Clients_Presence_ID);
+                }
+                else
+                {
+                    $varOnlineID = $this->CreateVariable($obj->varDeviceName, 0, FALSE, $varClientMAC . "_presence", $instance_Clients_Presence_ID);
+                }
             }
             else
-                $varOnlineID = $this->CreateVariable($obj->varDeviceName, 0, FALSE, $varClientMAC . "_presence", $instance_Clients_Presence_ID);
+            {
+                $this->SetStatus(202);// login error
+            }
 
         }        
     }
@@ -1784,14 +1793,17 @@ class UniFi extends IPSModule {
             foreach($this->ClientArray as $obj) {
                 $varClientMAC = str_replace(":", "", $obj->varDeviceMAC);
                 $varClientMAC = str_replace("-", "", $varClientMAC);
-
-                if (in_array($varClientMAC, $this->ClientArrayOnline, TRUE))
+                if (is_array($varClientMAC))
                 {
-                    $varOnlineID = $this->CreateVariable($obj->varDeviceName, 0, TRUE, $varClientMAC . "_presence", $instance_Clients_Presence_ID);
+                    if (in_array($varClientMAC, $this->ClientArrayOnline, TRUE))
+                    {
+                        $varOnlineID = $this->CreateVariable($obj->varDeviceName, 0, TRUE, $varClientMAC . "_presence", $instance_Clients_Presence_ID);
+                    }
+                    else
+                        $varOnlineID = $this->CreateVariable($obj->varDeviceName, 0, FALSE, $varClientMAC . "_presence", $instance_Clients_Presence_ID);
                 }
                 else
-                    $varOnlineID = $this->CreateVariable($obj->varDeviceName, 0, FALSE, $varClientMAC . "_presence", $instance_Clients_Presence_ID);
-
+                    $this->SetStatus(202);// login error
             }        
         }  
 }

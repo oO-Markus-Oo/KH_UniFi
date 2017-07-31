@@ -1733,7 +1733,7 @@ class UniFi extends IPSModule {
             $varClientMAC = str_replace(":", "", $obj->varDeviceMAC);
             $varClientMAC = str_replace("-", "", $varClientMAC);
             
-            if (is_array($this->ClientArrayOnline))
+            if (property_exists($this, 'ClientArrayOnline'))
             {
                 if (in_array($varClientMAC, $this->ClientArrayOnline, TRUE))
                 {
@@ -1788,7 +1788,7 @@ class UniFi extends IPSModule {
             foreach($this->ClientArray as $obj) {
                 $varClientMAC = str_replace(":", "", $obj->varDeviceMAC);
                 $varClientMAC = str_replace("-", "", $varClientMAC);
-                if (is_array($this->ClientArrayOnline))
+                if (property_exists($this, 'ClientArrayOnline'))
                 {
                     if (in_array($varClientMAC, $this->ClientArrayOnline, TRUE))
                     {

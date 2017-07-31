@@ -65,6 +65,7 @@ class UniFi extends IPSModule {
 
         if (($content = curl_exec($this->ch)) === false) {
             error_log('cURL error: '.curl_error($this->ch));
+            $this->SetStatus(202);// login error
         }
 
         if ($this->debug) {
@@ -92,11 +93,13 @@ class UniFi extends IPSModule {
                 if (($code >= 200) && ($code < 400)) {
                     if (strpos($this->cookies, 'unifises') !== false) {
                         $this->is_loggedin = true;
+                        $this->SetStatus(102); // login OK
                     }
                 }
 
                 if ($code === 400) {
                      error_log('We have received an HTTP response status: 400. Probably a controller login failure');
+                     $this->SetStatus(201);// login failed
                      return $code;
                 }
             }

@@ -1826,8 +1826,25 @@ class UniFi extends IPSModule {
                     $catID = $this->CreateCategoryByIdent($instance_LAN_ID, $ident, $lan->name);
                     $this->CreateVariable("ID", 3, $lan->_id, $ident . "_id", $catID);
                     $this->CreateVariable("Enabled", 0, $lan->enabled, $ident . "_enabled", $catID);
-                    $this->CreateVariable("VLAN", 1, intval($lan->vlan), $ident . "_vlan", $catID);
+                    if (isset($lan->vlan)) $this->CreateVariable("VLAN", 1, intval($lan->vlan), $ident . "_vlan", $catID);
                     $this->CreateVariable("VLAN_Enabled", 0, $lan->vlan_enabled, $ident . "_vlan_enabled", $catID);
+                }
+            } 
+        }
+    }  
+
+    private function GetWLAN_APs($instance_APS_ID) {
+        if ($this->is_loggedin == true)
+        {
+            $apList = $this->list_aps();
+
+            if (is_object($this->last_results_raw)) {
+                foreach ($this->last_results_raw->data as $aps) {
+                    $ident = $aps->_id;
+                    $catID = $this->CreateCategoryByIdent($instance_APS_ID, $ident, $aps->name);
+                    $this->CreateVariable("ID", 3, $aps->_id, $ident . "_id", $catID);
+                    $this->CreateVariable("Uptime", 1, $aps->uptime, $ident . "_uptime", $catID, "~UnixTimestampTime");
+                    
                 }
             } 
         }
@@ -1853,6 +1870,8 @@ class UniFi extends IPSModule {
         $instance_id_parent = $this->InstanceID;
         $instance_Clients_ID = $this->CreateCategoryByIdent($instance_id_parent, "Clients", "Clients");
         $instance_WLAN_ID = $this->CreateCategoryByIdent($instance_id_parent, "WLAN", "WLAN");
+        $instance_LAN_ID  = $this->CreateCategoryByIdent($instance_id_parent, "LAN", "LAN");
+        $instance_APS_ID  = $this->CreateCategoryByIdent($instance_id_parent, "UniFiDevices", "UniFi-Devices");
 
         $this->UpdateUniFiNetworkData();
         $this->UpdateUniFiClientData();
@@ -1873,9 +1892,11 @@ class UniFi extends IPSModule {
         $instance_id_parent = $this->InstanceID;
         $instance_WLAN_ID = $this->CreateCategoryByIdent($instance_id_parent, "WLAN", "WLAN");
         $instance_LAN_ID  = $this->CreateCategoryByIdent($instance_id_parent, "LAN", "LAN");
+        $instance_APS_ID  = $this->CreateCategoryByIdent($instance_id_parent, "UniFiDevices", "UniFi-Devices");
 
         $this->GetWLANnetworks($instance_WLAN_ID);
         $this->GetLANnetworks($instance_LAN_ID);
+        $this->GetWLAN_APs($instance_APS_ID);
         $this->Logout();
     }
 

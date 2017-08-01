@@ -1812,6 +1812,22 @@ class UniFi extends IPSModule {
         }
     }
 
+    private function GetLANnetworks($instance_LAN_ID) {
+        if ($this->is_loggedin == true)
+        {
+            $lanList = $this->list_networkconf();
+
+            if (is_object($this->last_results_raw)) {
+                foreach ($this->last_results_raw->data as $lan) {
+                    $ident = $lan->_id;
+                    $catID = $this->CreateCategoryByIdent($instance_LAN_ID, $ident, $lan->name);
+                    $this->CreateVariable("ID", 3, $lan->_id, $ident . "_id", $catID);
+                    $this->CreateVariable("Enabled", 0, $lan->enabled, $ident . "_enabled", $catID);
+                }
+            } 
+        }
+    }    
+
     public function ApplyChanges() {
         //Never delete this line!
         parent::ApplyChanges();
@@ -1851,8 +1867,10 @@ class UniFi extends IPSModule {
         # create neccessary folders
         $instance_id_parent = $this->InstanceID;
         $instance_WLAN_ID = $this->CreateCategoryByIdent($instance_id_parent, "WLAN", "WLAN");
+        $instance_LAN_ID  = $this->CreateCategoryByIdent($instance_id_parent, "LAN", "LAN");
 
         $this->GetWLANnetworks($instance_WLAN_ID);
+        $this->GetLANnetworks($instance_LAN_ID);
         $this->Logout();
     }
 

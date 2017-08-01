@@ -1664,7 +1664,7 @@ class UniFi extends IPSModule {
         }
     }
 
-    private function CreateVariable($Name, $Type, $Value, $Ident = '', $ParentID = 0) {
+    private function CreateVariable($Name, $Type, $Value, $Ident = '', $ParentID = 0, $profile = "") {
         //echo "CreateVariable: ( $Name, $Type, $Value, $Ident, $ParentID ) \n";
         if ('' != $Ident) {
             $VarID = @IPS_GetObjectIDByIdent($Ident, $ParentID);
@@ -1687,6 +1687,10 @@ class UniFi extends IPSModule {
         $VarID = IPS_CreateVariable($Type);
         IPS_SetParent($VarID, $ParentID);
         IPS_SetName($VarID, $Name);
+        if($profile != "")
+        {
+            IPS_SetVariableCustomProfile($VarID, $profile);
+        }
         if ('' != $Ident) {
             IPS_SetIdent($VarID, $Ident);
         }
@@ -1724,7 +1728,7 @@ class UniFi extends IPSModule {
                     $this->CreateVariable("Radio", 3, $client->radio, $ident . "_radio", $catID);
                     $this->CreateVariable("TX Bytes", 1, $client->tx_bytes, $ident . "_txbytes", $catID);
                     $this->CreateVariable("RX Bytes", 1, $client->rx_bytes, $ident . "_rxbytes", $catID);
-                    $this->CreateVariable("Uptime", 1, $client->uptime, $ident . "_uptime", $catID);
+                    $this->CreateVariable("Uptime", 1, $client->uptime, $ident . "_uptime", $catID, "~UnixTimestampTime");
                 }
             }
         }       

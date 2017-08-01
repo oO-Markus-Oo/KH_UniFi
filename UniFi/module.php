@@ -1669,6 +1669,7 @@ class UniFi extends IPSModule {
         if ('' != $Ident) {
             $VarID = @IPS_GetObjectIDByIdent($Ident, $ParentID);
             if (false !== $VarID) {
+                IPS_SetVariableCustomProfile($VarID, $profile);
                 $this->SetVariable($VarID, $Type, $Value);
                 return;
             }
@@ -1679,6 +1680,7 @@ class UniFi extends IPSModule {
             if (2 == $Obj['ObjectType']) { // is variable?
                 $Var = IPS_GetVariable($VarID);
                 if ($Type == $Var['VariableValue']['ValueType']) {
+                    IPS_SetVariableCustomProfile($VarID, $profile);
                     $this->SetVariable($VarID, $Type, $Value);
                     return;
                 }

@@ -1840,6 +1840,8 @@ class UniFi extends IPSModule {
                     $ident = $aps->_id;
                     $catID = $this->CreateCategoryByIdent($instance_APS_ID, $ident, $aps->name);
                     $this->CreateVariable("ID", 3, $aps->_id, $ident . "_id", $catID);
+                    $this->CreateVariable("Uptime", 1, $client->uptime, $ident . "_uptime", $catID, "~UnixTimestampTime");
+                    
                 }
             } 
         }
@@ -1866,7 +1868,7 @@ class UniFi extends IPSModule {
         $instance_Clients_ID = $this->CreateCategoryByIdent($instance_id_parent, "Clients", "Clients");
         $instance_WLAN_ID = $this->CreateCategoryByIdent($instance_id_parent, "WLAN", "WLAN");
         $instance_LAN_ID  = $this->CreateCategoryByIdent($instance_id_parent, "LAN", "LAN");
-        $instance_APS_ID  = $this->CreateCategoryByIdent($instance_id_parent, "AccessPoints", "AccessPoints");
+        $instance_APS_ID  = $this->CreateCategoryByIdent($instance_id_parent, "UniFi-Devices", "UniFi-Devices");
 
         $this->UpdateUniFiNetworkData();
         $this->UpdateUniFiClientData();
@@ -1887,7 +1889,7 @@ class UniFi extends IPSModule {
         $instance_id_parent = $this->InstanceID;
         $instance_WLAN_ID = $this->CreateCategoryByIdent($instance_id_parent, "WLAN", "WLAN");
         $instance_LAN_ID  = $this->CreateCategoryByIdent($instance_id_parent, "LAN", "LAN");
-        $instance_APS_ID  = $this->CreateCategoryByIdent($instance_id_parent, "AccessPoints", "AccessPoints");
+        $instance_APS_ID  = $this->CreateCategoryByIdent($instance_id_parent, "UniFi-Devices", "UniFi-Devices");
 
         $this->GetWLANnetworks($instance_WLAN_ID);
         $this->GetLANnetworks($instance_LAN_ID);

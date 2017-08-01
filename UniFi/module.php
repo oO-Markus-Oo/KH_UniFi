@@ -1823,6 +1823,8 @@ class UniFi extends IPSModule {
                     $catID = $this->CreateCategoryByIdent($instance_LAN_ID, $ident, $lan->name);
                     $this->CreateVariable("ID", 3, $lan->_id, $ident . "_id", $catID);
                     $this->CreateVariable("Enabled", 0, $lan->enabled, $ident . "_enabled", $catID);
+                    $this->CreateVariable("VLAN", 1, intval($lan->vlan), $ident . "_vlan", $catID);
+                    $this->CreateVariable("VLAN_Enabled", 0, $lan->vlan_enabled, $ident . "_vlan_enabled", $catID);
                 }
             } 
         }

@@ -1840,7 +1840,7 @@ class UniFi extends IPSModule {
                     $ident = $aps->_id;
                     $catID = $this->CreateCategoryByIdent($instance_APS_ID, $ident, $aps->name);
                     $this->CreateVariable("ID", 3, $aps->_id, $ident . "_id", $catID);
-                    $this->CreateVariable("Uptime", 1, $client->uptime, $ident . "_uptime", $catID, "~UnixTimestampTime");
+                    $this->CreateVariable("Uptime", 1, $aps->uptime, $ident . "_uptime", $catID, "~UnixTimestampTime");
                     
                 }
             } 

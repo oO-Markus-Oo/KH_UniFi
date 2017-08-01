@@ -32,12 +32,12 @@ class UniFi extends IPSModule {
         $this->RegisterPropertyString("UserName", "admin");
         $this->RegisterPropertyString("UserPassword", "");
         $this->RegisterPropertyString("Clients", "");
-        $this->RegisterPropertyString("Site", "");
-        $this->RegisterPropertyInteger("Intervall_Network", 0);
-        $this->RegisterPropertyInteger("Intervall_Client", 0);
+        $this->RegisterPropertyString("Site", "default");
+        $this->RegisterPropertyInteger("Intervall_Network", 3600);
+        $this->RegisterPropertyInteger("Intervall_Client", 60);
         $this->RegisterPropertyBoolean("Debug", FALSE);
-        $this->RegisterTimer("Intervall_Network", 0, 'UniFi_UpdateUniFiNetworkData($_IPS[\'TARGET\']);');
-        $this->RegisterTimer("Intervall_Client", 0, 'UniFi_UpdateUniFiClientData($_IPS[\'TARGET\']);');
+        $this->RegisterTimer("Intervall_Network", 3600, 'UniFi_UpdateUniFiNetworkData($_IPS[\'TARGET\']);');
+        $this->RegisterTimer("Intervall_Client", 60, 'UniFi_UpdateUniFiClientData($_IPS[\'TARGET\']);');
     }
 
     /**

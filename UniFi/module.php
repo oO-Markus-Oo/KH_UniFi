@@ -1719,6 +1719,10 @@ class UniFi extends IPSModule {
                         $client->name = $client->mac;
                         $client->hostname = $client->mac;
                     }   
+                    if(!isset($client->ip))
+                    {
+                        $client->ip = "n/a";
+                    }                     
                     $ident = str_replace(":", "", $client->mac);
                     $ident = str_replace("-", "", $ident);
                     $this->ClientArrayOnline[] = $ident;

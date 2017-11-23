@@ -1671,7 +1671,7 @@ class UniFi extends IPSModule {
                 //IPS_SetVariableCustomProfile($VarID, $profile);
                 //$this->SetVariable($VarID, $Type, $Value);
                 $this->SendDebug("getVariableValue", "ID ist: " . $VarID, 0);
-                return;
+                return $VarID;
             }
         }
     }
@@ -1747,7 +1747,8 @@ class UniFi extends IPSModule {
                     $this->CreateVariable("TX Bytes", 2, $client->tx_bytes, $ident . "_txbytes", $catID);
                     $this->CreateVariable("RX Bytes", 2, $client->rx_bytes, $ident . "_rxbytes", $catID);
                     $this->CreateVariable("Uptime", 1, $client->uptime, $ident . "_uptime", $catID, "~UnixTimestampTime");
-                    $this->getVariableValue("TX Bytes",  $client->tx_bytes, $catID);
+                    $id=$this->getVariableValue("TX Bytes",  $client->tx_bytes, $catID);
+                    $this->CreateVariable("ID", 1, $id, $ident . "_id", $catID);
                 }
             }
         }       

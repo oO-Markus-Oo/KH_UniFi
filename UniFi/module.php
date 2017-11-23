@@ -1748,7 +1748,7 @@ class UniFi extends IPSModule {
                     $this->CreateVariable("TX Bytes", 2, $client->tx_bytes, $ident . "_txbytes", $catID);
                     $this->CreateVariable("RX Bytes", 2, $client->rx_bytes, $ident . "_rxbytes", $catID);
                     $this->CreateVariable("Uptime", 1, $client->uptime, $ident . "_uptime", $catID, "~UnixTimestampTime");
-                    $id=$this->getVariableValue("TX Bytes",  $client->tx_bytes, $catID);
+                    $id=$this->getVariableValue("TX Bytes",  $ident . "_txbytes", $catID);
                     $this->CreateVariable("ID", 1, $id, $ident . "_id", $catID);
                 }
             }

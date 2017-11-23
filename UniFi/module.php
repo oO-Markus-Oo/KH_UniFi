@@ -1665,6 +1665,7 @@ class UniFi extends IPSModule {
     }
 
     private function getVariableValue($Name, $Ident = '', $ParentID = 0) {
+        $this->SendDebug("getVariableValue", "Ident ist: " . $Ident, 0);
         if ('' != $Ident) {
             $VarID = @IPS_GetObjectIDByIdent($Ident, $ParentID);
             if (false !== $VarID) {

@@ -1773,6 +1773,8 @@ class UniFi extends IPSModule {
                         $this->CreateVariable("MAC", 3, $client->mac, $ident . "_mac", $catID);
                         $this->CreateVariable("IP", 3, $client->ip, $ident . "_ip", $catID);
                         $this->CreateVariable("Hostname", 3, $client->hostname, $ident . "_hostname", $catID);
+                        $this->CreateVariable("TX Bytes", 2, $client->tx_bytes, $ident . "_txbytes", $catID);
+                        $this->CreateVariable("RX Bytes", 2, $client->rx_bytes, $ident . "_rxbytes", $catID);
                         $this->CreateVariable("Uptime", 1, $client->uptime, $ident . "_uptime", $catID, "~UnixTimestampTime");
                     }
                 }

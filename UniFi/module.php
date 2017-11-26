@@ -1664,18 +1664,24 @@ class UniFi extends IPSModule {
         }
     }
 
-    private function getVariableValue($Name, $Ident = '', $ParentID = 0) {
+    private function CalculateRate($Name, $AktValue, $Ident = '', $ParentID = 0) {
         $this->SendDebug("getVariableValue", "Ident ist: " . $Ident, 0);
         if ('' != $Ident) {
             $VarID = @IPS_GetObjectIDByIdent($Ident, $ParentID);
             if (false !== $VarID) {
-                //IPS_SetVariableCustomProfile($VarID, $profile);
-                //$this->SetVariable($VarID, $Type, $Value);
                 $this->SendDebug("getVariableValue", "VarID ist: " . $VarID, 0);
                 $v = IPS_GetVariable($VarID);
                 $this->SendDebug("getVariableValue", "letztes Update: " .date("d.m.y H:i", $v['VariableUpdated']),0);
                 $this->SendDebug("getVariableValue", "letzter Wert: " . $v['VariableValue'],0);
+                $this->SendDebug("getVariableValue", "aktueller Wert: " . $AktValue,0);
+                $this->SendDebug("getVariableValue", "aktuellee Zeit: " .time,0);
                 
+                //Überlauf/Zurücksetzen Downloadzähler abfangen
+                if ($AktValue>$v['VariableValue']){
+                    $timediff=$v['VariableUpdated']-time;
+                    $datendiff=($v['VariableValue']-$AktValue)*8;
+                    $rate=round($datendiff/$timediff);
+                }
                 return $VarID;
             }
         }
@@ -1752,7 +1758,7 @@ class UniFi extends IPSModule {
                     $this->CreateVariable("TX Bytes", 2, $client->tx_bytes, $ident . "_txbytes", $catID);
                     $this->CreateVariable("RX Bytes", 2, $client->rx_bytes, $ident . "_rxbytes", $catID);
                     $this->CreateVariable("Uptime", 1, $client->uptime, $ident . "_uptime", $catID, "~UnixTimestampTime");
-                    $id=$this->getVariableValue("TX Bytes",  $ident . "_txbytes", $catID);
+                    $id=$this->CalculateRate("TX Bytes", $client->tx_bytes, $ident . "_txbytes", $catID);
                     $this->CreateVariable("ID", 1, $id, $ident . "_id", $catID);
                 }
             }
@@ -1852,7 +1858,7 @@ class UniFi extends IPSModule {
                     $this->CreateVariable("ID", 3, $lan->_id, $ident . "_id", $catID);
                     $this->CreateVariable("Enabled", 0, $lan->enabled, $ident . "_enabled", $catID);
                     if (isset($lan->vlan)) $this->CreateVariable("VLAN", 1, intval($lan->vlan), $ident . "_vlan", $catID);
-                    $this->CreateVariable("VLAN_Enabled", 0, $lan->vlan_enabled, $ident . "_vlan_enabled", $catID);
+                    if (isset($lan->vlan_enabled))$this->CreateVariable("VLAN_Enabled", 0, $lan->vlan_enabled, $ident . "_vlan_enabled", $catID);
                 }
             } 
         }

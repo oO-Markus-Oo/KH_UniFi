@@ -1673,7 +1673,9 @@ class UniFi extends IPSModule {
                 //$this->SetVariable($VarID, $Type, $Value);
                 $this->SendDebug("getVariableValue", "VarID ist: " . $VarID, 0);
                 $v = IPS_GetVariable($VarID);
-                $this->SendDebug("getVariableValue", "letztes Update: " .$v['VariableUpdated']);
+                $this->SendDebug("getVariableValue", "letztes Update: " .date("d.m.y H:i", $v['VariableUpdated']),0);
+                $this->SendDebug("getVariableValue", "letzter Wert: " . $v['VariableValue'],0);
+                
                 return $VarID;
             }
         }

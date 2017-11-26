@@ -1665,6 +1665,7 @@ class UniFi extends IPSModule {
     }
 
     private function CalculateRate($Name, $AktValue, $Ident = '', $ParentID = 0) {
+        $rate=0;
         $this->SendDebug("getVariableValue", "Ident ist: " . $Ident, 0);
         if ('' != $Ident) {
             $VarID = @IPS_GetObjectIDByIdent($Ident, $ParentID);
@@ -1683,10 +1684,9 @@ class UniFi extends IPSModule {
                     $rate=round($datendiff/$timediff);
                     $this->SendDebug("getVariableValue", "Downloadrate: " . $rate,0);
                 }
-
-                return $VarID;
             }
         }
+        return $rate;
     }
     
     private function CreateVariable($Name, $Type, $Value, $Ident = '', $ParentID = 0, $profile = "") {
@@ -1757,11 +1757,13 @@ class UniFi extends IPSModule {
                     $this->CreateVariable("Hostname", 3, $client->hostname, $ident . "_hostname", $catID);
                     $this->CreateVariable("Signal", 1, $client->signal, $ident . "_signal", $catID);
                     $this->CreateVariable("Radio", 3, $client->radio, $ident . "_radio", $catID);
+                    //Downloadrate berechnen
+                    $txrate=$this->CalculateRate("TX Bytes", $client->tx_bytes, $ident . "_txbytes", $catID);
+                    //Erste danach die aktuellen Werte eintragen
                     $this->CreateVariable("TX Bytes", 2, $client->tx_bytes, $ident . "_txbytes", $catID);
                     $this->CreateVariable("RX Bytes", 2, $client->rx_bytes, $ident . "_rxbytes", $catID);
                     $this->CreateVariable("Uptime", 1, $client->uptime, $ident . "_uptime", $catID, "~UnixTimestampTime");
-                    $id=$this->CalculateRate("TX Bytes", $client->tx_bytes, $ident . "_txbytes", $catID);
-                    $this->CreateVariable("ID", 1, $id, $ident . "_id", $catID);
+                    $this->CreateVariable("Downloadrate", 1, $txrate, $ident . "_txrate", $catID);
                 }
             }
         }       

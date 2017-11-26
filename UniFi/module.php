@@ -1674,14 +1674,16 @@ class UniFi extends IPSModule {
                 $this->SendDebug("getVariableValue", "letztes Update: " .date("d.m.y H:i", $v['VariableUpdated']),0);
                 $this->SendDebug("getVariableValue", "letzter Wert: " . $v['VariableValue'],0);
                 $this->SendDebug("getVariableValue", "aktueller Wert: " . $AktValue,0);
-                $this->SendDebug("getVariableValue", "aktuellee Zeit: " .time,0);
+                $this->SendDebug("getVariableValue", "aktuelle Zeit: " . time(),0);
                 
                 //Überlauf/Zurücksetzen Downloadzähler abfangen
                 if ($AktValue>$v['VariableValue']){
-                    $timediff=$v['VariableUpdated']-time;
+                    $timediff=$v['VariableUpdated']-time();
                     $datendiff=($v['VariableValue']-$AktValue)*8;
                     $rate=round($datendiff/$timediff);
+                    $this->SendDebug("getVariableValue", "Downloadrate: " . $rate,0);
                 }
+
                 return $VarID;
             }
         }

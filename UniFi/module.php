@@ -1664,6 +1664,31 @@ class UniFi extends IPSModule {
         }
     }
 
+    private function CalculateRate($Name, $AktValue, $Ident = '', $ParentID = 0) {
+        $rate=0;
+        $this->SendDebug("getVariableValue", "Ident ist: " . $Ident, 0);
+        if ('' != $Ident) {
+            $VarID = @IPS_GetObjectIDByIdent($Ident, $ParentID);
+            if (false !== $VarID) {
+                $this->SendDebug("getVariableValue", "VarID ist: " . $VarID, 0);
+                $v = IPS_GetVariable($VarID);
+                $this->SendDebug("getVariableValue", "letztes Update: " .date("d.m.y H:i", $v['VariableUpdated']),0);
+                $this->SendDebug("getVariableValue", "letzter Wert: " . $v['VariableValue'],0);
+                $this->SendDebug("getVariableValue", "aktueller Wert: " . $AktValue,0);
+                $this->SendDebug("getVariableValue", "aktuelle Zeit: " . time(),0);
+                
+                //Überlauf/Zurücksetzen Downloadzähler abfangen
+                if ($AktValue>$v['VariableValue']){
+                    $timediff=$v['VariableUpdated']-time();
+                    $datendiff=($v['VariableValue']-$AktValue)*8;
+                    $rate=round($datendiff/$timediff);
+                    $this->SendDebug("getVariableValue", "Downloadrate: " . $rate,0);
+                }
+            }
+        }
+        return $rate;
+    }
+    
     private function CreateVariable($Name, $Type, $Value, $Ident = '', $ParentID = 0, $profile = "") {
         //echo "CreateVariable: ( $Name, $Type, $Value, $Ident, $ParentID ) \n";
         if ('' != $Ident) {
@@ -1732,9 +1757,13 @@ class UniFi extends IPSModule {
                     $this->CreateVariable("Hostname", 3, $client->hostname, $ident . "_hostname", $catID);
                     $this->CreateVariable("Signal", 1, $client->signal, $ident . "_signal", $catID);
                     $this->CreateVariable("Radio", 3, $client->radio, $ident . "_radio", $catID);
-                    $this->CreateVariable("TX Bytes", 1, $client->tx_bytes, $ident . "_txbytes", $catID);
-                    $this->CreateVariable("RX Bytes", 1, $client->rx_bytes, $ident . "_rxbytes", $catID);
+                    //Downloadrate berechnen
+                    $txrate=$this->CalculateRate("TX Bytes", $client->tx_bytes, $ident . "_txbytes", $catID);
+                    //Erste danach die aktuellen Werte eintragen
+                    $this->CreateVariable("TX Bytes", 2, $client->tx_bytes, $ident . "_txbytes", $catID);
+                    $this->CreateVariable("RX Bytes", 2, $client->rx_bytes, $ident . "_rxbytes", $catID);
                     $this->CreateVariable("Uptime", 1, $client->uptime, $ident . "_uptime", $catID, "~UnixTimestampTime");
+                    $this->CreateVariable("Downloadrate", 1, $txrate, $ident . "_txrate", $catID);
                 }
             }
         }       
@@ -1773,6 +1802,8 @@ class UniFi extends IPSModule {
                         $this->CreateVariable("MAC", 3, $client->mac, $ident . "_mac", $catID);
                         $this->CreateVariable("IP", 3, $client->ip, $ident . "_ip", $catID);
                         $this->CreateVariable("Hostname", 3, $client->hostname, $ident . "_hostname", $catID);
+                        $this->CreateVariable("TX Bytes", 2, $client->tx_bytes, $ident . "_txbytes", $catID);
+                        $this->CreateVariable("RX Bytes", 2, $client->rx_bytes, $ident . "_rxbytes", $catID);
                         $this->CreateVariable("Uptime", 1, $client->uptime, $ident . "_uptime", $catID, "~UnixTimestampTime");
                     }
                 }
@@ -1783,17 +1814,20 @@ class UniFi extends IPSModule {
     private function CheckPresence($instance_Clients_Presence_ID) {
         if ($this->is_loggedin == true)
         {
-            foreach($this->ClientArray as $obj) {
-                $varClientMAC = str_replace(":", "", $obj->varDeviceMAC);
-                $varClientMAC = str_replace("-", "", $varClientMAC);
-                if (property_exists($this, 'ClientArrayOnline'))
-                {
-                    if (in_array($varClientMAC, $this->ClientArrayOnline, TRUE))
+            if (count($this->ClientArray) != 0)
+            {
+                foreach($this->ClientArray as $obj) {
+                    $varClientMAC = str_replace(":", "", $obj->varDeviceMAC);
+                    $varClientMAC = str_replace("-", "", $varClientMAC);
+                    if (property_exists($this, 'ClientArrayOnline'))
                     {
-                        $varOnlineID = $this->CreateVariable($obj->varDeviceName, 0, TRUE, $varClientMAC . "_presence", $instance_Clients_Presence_ID);
+                        if (in_array($varClientMAC, $this->ClientArrayOnline, TRUE))
+                        {
+                            $varOnlineID = $this->CreateVariable($obj->varDeviceName, 0, TRUE, $varClientMAC . "_presence", $instance_Clients_Presence_ID);
+                        }
+                        else
+                            $varOnlineID = $this->CreateVariable($obj->varDeviceName, 0, FALSE, $varClientMAC . "_presence", $instance_Clients_Presence_ID);
                     }
-                    else
-                        $varOnlineID = $this->CreateVariable($obj->varDeviceName, 0, FALSE, $varClientMAC . "_presence", $instance_Clients_Presence_ID);
                 }
             }
         }
@@ -1828,7 +1862,7 @@ class UniFi extends IPSModule {
                     $this->CreateVariable("ID", 3, $lan->_id, $ident . "_id", $catID);
                     $this->CreateVariable("Enabled", 0, $lan->enabled, $ident . "_enabled", $catID);
                     if (isset($lan->vlan)) $this->CreateVariable("VLAN", 1, intval($lan->vlan), $ident . "_vlan", $catID);
-                    $this->CreateVariable("VLAN_Enabled", 0, $lan->vlan_enabled, $ident . "_vlan_enabled", $catID);
+                    if (isset($lan->vlan_enabled))$this->CreateVariable("VLAN_Enabled", 0, $lan->vlan_enabled, $ident . "_vlan_enabled", $catID);
                 }
             } 
         }

@@ -1794,7 +1794,15 @@ class UniFi extends IPSModule {
                         if(!isset($client->ip))
                         {
                             $client->ip = "0.0.0.0";
-                        }                    
+                        }  
+                        if(!isset($client->{'wired-tx_bytes'}))
+                        {
+                            $client->{'wired-tx_bytes'} = 0;
+                        }  
+						if(!isset($client->{'wired-rx_bytes'}))
+                        {
+                            $client->{'wired-rx_bytes'} = 0;
+                        }  
                         $ident = str_replace(":", "", $client->mac);
                         $ident = str_replace("-", "", $ident);
                         $this->ClientArrayOnline[] = $ident;
@@ -1803,9 +1811,7 @@ class UniFi extends IPSModule {
                         $this->CreateVariable("IP", 3, $client->ip, $ident . "_ip", $catID);
                         $this->CreateVariable("Hostname", 3, $client->hostname, $ident . "_hostname", $catID);
 						if (!isset($client->tx_bytes) AND isset($client->{'wired-tx_bytes'})) $client->tx_bytes = $client->{'wired-tx_bytes'}; 
-						if (!isset($client->rx_bytes) AND isset($client->{'wired-rx_bytes'})) $client->rx_bytes = $client->{'wired-rx_bytes'};
-						if (!isset($client->tx_bytes) AND isset(!$client->{'wired-tx_bytes'})) $client->tx_bytes = 0; 
-						if (!isset($client->rx_bytes) AND isset(!$client->{'wired-rx_bytes'})) $client->rx_bytes = 0;						
+						if (!isset($client->rx_bytes) AND isset($client->{'wired-rx_bytes'})) $client->rx_bytes = $client->{'wired-rx_bytes'};					
                         $this->CreateVariable("TX Bytes", 2, $client->tx_bytes, $ident . "_txbytes", $catID);
                         $this->CreateVariable("RX Bytes", 2, $client->rx_bytes, $ident . "_rxbytes", $catID);
                         $this->CreateVariable("Uptime", 1, $client->uptime, $ident . "_uptime", $catID, "~UnixTimestampTime");

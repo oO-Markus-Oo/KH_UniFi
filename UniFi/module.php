@@ -1803,7 +1803,7 @@ class UniFi extends IPSModule {
                         $this->CreateVariable("IP", 3, $client->ip, $ident . "_ip", $catID);
                         $this->CreateVariable("Hostname", 3, $client->hostname, $ident . "_hostname", $catID);
 						if (!isset($client->tx_bytes)) print_r($client); 
-						if (!isset($client->rx_bytes)) $client->rx_bytes = $client->wired-rx_bytes;
+						if (!isset($client->rx_bytes)) $client->rx_bytes = $client->'wired-rx_bytes';
                         $this->CreateVariable("TX Bytes", 2, $client->wired-tx_bytes, $ident . "_txbytes", $catID);
                         $this->CreateVariable("RX Bytes", 2, $client->wired-rx_bytes, $ident . "_rxbytes", $catID);
                         $this->CreateVariable("Uptime", 1, $client->uptime, $ident . "_uptime", $catID, "~UnixTimestampTime");

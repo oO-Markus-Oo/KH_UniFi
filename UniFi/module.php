@@ -1760,8 +1760,8 @@ class UniFi extends IPSModule {
                     //Downloadrate berechnen
                     $txrate=$this->CalculateRate("TX Bytes", $client->tx_bytes, $ident . "_txbytes", $catID);
                     //Erste danach die aktuellen Werte eintragen
-                    $this->CreateVariable("TX Bytes", 2, $client->tx_bytes, $ident . "_txbytes", $catID);
-                    $this->CreateVariable("RX Bytes", 2, $client->rx_bytes, $ident . "_rxbytes", $catID);
+                    $this->CreateVariable("TX Bytes", 1, $client->tx_bytes, $ident . "_txbytes", $catID);
+                    $this->CreateVariable("RX Bytes", 1, $client->rx_bytes, $ident . "_rxbytes", $catID);
                     $this->CreateVariable("Uptime", 1, $client->uptime, $ident . "_uptime", $catID, "~UnixTimestampTime");
                     $this->CreateVariable("Downloadrate", 1, $txrate, $ident . "_txrate", $catID);
                 }

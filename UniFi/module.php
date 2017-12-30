@@ -1705,6 +1705,22 @@ class UniFi extends IPSModule {
         IPS_SetScriptContent($ScriptID, $ScriptTEXT);
         return $ScriptID;   
     }
+    
+    private function SetEventByName($triggervariableID, $scriptid, $name, $eventtype, $triggervalue)
+    {
+        $eid = @IPS_GetEventIDByName($name, $scriptid);
+        if($eid === false)
+        {
+            $eid = IPS_CreateEvent(0);                                    //Ausgelöstes Ereignis
+            IPS_SetEventTrigger($eid, $eventtype, $triggervariableID);    //Event-Typ festlegen (Aktualisierung, Änderung etc.)
+            if ($eventtype >= 2) IPS_SetEventTriggerValue($eid, $triggervalue);
+            IPS_SetParent($eid, $scriptid);
+            IPS_SetName($eid, $name);
+            IPS_SetInfo($eid, "this event was created by script #".$_IPS['SELF']);
+            IPS_SetEventActive($eid, true);
+        }
+        return $eid;
+    }
 
     private function CreateVariable($Name, $Type, $Value, $Ident = '', $ParentID = 0, $profile = "") {
         //echo "CreateVariable: ( $Name, $Type, $Value, $Ident, $ParentID ) \n";
@@ -1880,7 +1896,7 @@ class UniFi extends IPSModule {
                     $this->CreateScriptByName("Enable_".$wlan->name,  $this->GetIDForIdent($ident . "_enabledSET"), $ScriptTEXT_enable,  $SetHidden = TRUE);
                     $this->CreateScriptByName("Disable_".$wlan->name, $this->GetIDForIdent($ident . "_enabledSET"), $ScriptTEXT_disable, $SetHidden = TRUE);
                     $this->EnableAction($ident . "_enabledSET");
-                    IPS_SetVariableCustomAction($this->GetIDForIdent($ident . "_enabledSET"), $ActionScriptID);
+                    $this->SetEventByName(GetIDForIdent($ident . "_enabledSET"), $ActionScriptID, "Update WLAN Mode", 0);
                     $this->CreateVariable("Security", 3, $wlan->security, $ident . "_security", $catID);
                 }
             } 

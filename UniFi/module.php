@@ -1677,7 +1677,7 @@ class UniFi extends IPSModule {
                 $this->SendDebug("getVariableValue", "aktueller Wert: " . $AktValue,0);
                 $this->SendDebug("getVariableValue", "aktuelle Zeit: " . time(),0);
                 
-                //Überlauf/Zurücksetzen Downloadzähler abfangen
+                //Ueberlauf/Zuruecksetzen Downloadzaehler abfangen
                 if ($AktValue>$v['VariableValue']){
                     $timediff=$v['VariableUpdated']-time();
                     $datendiff=($v['VariableValue']-$AktValue)*8;
@@ -1833,10 +1833,10 @@ class UniFi extends IPSModule {
                     {
                         if (in_array($varClientMAC, $this->ClientArrayOnline, TRUE))
                         {
-                            $varOnlineID = $this->CreateVariable($obj->varDeviceName, 0, TRUE, $varClientMAC . "_presence", $instance_Clients_Presence_ID);
+                            $varOnlineID = $this->CreateVariable($obj->varDeviceName, 0, TRUE, $varClientMAC . "_presence", $instance_Clients_Presence_ID, "~Presence");
                         }
                         else
-                            $varOnlineID = $this->CreateVariable($obj->varDeviceName, 0, FALSE, $varClientMAC . "_presence", $instance_Clients_Presence_ID);
+                            $varOnlineID = $this->CreateVariable($obj->varDeviceName, 0, FALSE, $varClientMAC . "_presence", $instance_Clients_Presence_ID, "~Presence");
                     }
                 }
             }

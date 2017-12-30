@@ -1873,11 +1873,14 @@ class UniFi extends IPSModule {
                     $this->CreateVariable("Enabled", 0, $wlan->enabled, $ident . "_enabled", $catID);
                     $this->RegisterVariableBoolean($ident . "_enabledSET", "WLAN [".$wlan->name."] - Set Mode:", "~Switch");
                     IPS_SetInfo($this->GetIDForIdent($ident . "_enabledSET"), $ident);
-                    $ScriptTEXT_enable = 'UniFi_SetWLANMode('.$this->InstanceID.', "'.$ident.'_enabledSET", "true");';
-                    $ScriptTEXT_disable = 'UniFi_SetWLANMode('.$this->InstanceID.', "'.$ident.'_enabledSET", "false");';
+                    $ScriptTEXT_Action = '<?php UniFi_SetWLANMode('.$this->InstanceID.', "'.$ident.'_enabledSET", $_IPS["VALUE"]); ?>';
+                    $ScriptTEXT_enable = '<?php UniFi_SetWLANMode('.$this->InstanceID.', "'.$ident.'_enabledSET", "true"); ?>';
+                    $ScriptTEXT_disable = '<?php UniFi_SetWLANMode('.$this->InstanceID.', "'.$ident.'_enabledSET", "false"); ?>';
+                    $ActionScriptID = $this->CreateScriptByName("Action_".$wlan->name,  $this->GetIDForIdent($ident . "_enabledSET"), $ScriptTEXT_Action,  $SetHidden = TRUE);
                     $this->CreateScriptByName("Enable_".$wlan->name,  $this->GetIDForIdent($ident . "_enabledSET"), $ScriptTEXT_enable,  $SetHidden = TRUE);
                     $this->CreateScriptByName("Disable_".$wlan->name, $this->GetIDForIdent($ident . "_enabledSET"), $ScriptTEXT_disable, $SetHidden = TRUE);
                     $this->EnableAction($ident . "_enabledSET");
+                    IPS_SetVariableCustomAction($this->GetIDForIdent($ident . "_enabledSET"), $ActionScriptID);
                     $this->CreateVariable("Security", 3, $wlan->security, $ident . "_security", $catID);
                 }
             } 

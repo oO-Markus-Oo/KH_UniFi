@@ -1892,11 +1892,9 @@ class UniFi extends IPSModule {
                     $ScriptTEXT_Action = '<?php UniFi_SetWLANMode('.$this->InstanceID.', "'.$ident.'_enabledSET", $_IPS["VALUE"]); ?>';
                     $ScriptTEXT_enable = '<?php UniFi_SetWLANMode('.$this->InstanceID.', "'.$ident.'_enabledSET", "true"); ?>';
                     $ScriptTEXT_disable = '<?php UniFi_SetWLANMode('.$this->InstanceID.', "'.$ident.'_enabledSET", "false"); ?>';
-                    $ActionScriptID = $this->CreateScriptByName("Action_".$wlan->name,  $this->GetIDForIdent($ident . "_enabledSET"), $ScriptTEXT_Action,  $SetHidden = TRUE);
                     $this->CreateScriptByName("Enable_".$wlan->name,  $this->GetIDForIdent($ident . "_enabledSET"), $ScriptTEXT_enable,  $SetHidden = TRUE);
                     $this->CreateScriptByName("Disable_".$wlan->name, $this->GetIDForIdent($ident . "_enabledSET"), $ScriptTEXT_disable, $SetHidden = TRUE);
                     $this->EnableAction($ident . "_enabledSET");
-                    $this->SetEventByName($this->GetIDForIdent($ident . "_enabledSET"), $ActionScriptID, "Update WLAN Mode", 0);
                     $this->CreateVariable("Security", 3, $wlan->security, $ident . "_security", $catID);
                 }
             } 

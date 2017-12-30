@@ -1689,6 +1689,23 @@ class UniFi extends IPSModule {
         return $rate;
     }
     
+    private function CreateScriptByName($ScriptNAME, $ParentID, $ScriptTEXT, $SetHidden = TRUE)
+    {
+        $ScriptID = @IPS_GetScriptIDByName($ScriptNAME, $ParentID);
+        if ($ScriptID === false){
+
+           $ScriptID = IPS_CreateScript(0);
+           IPS_SetName($ScriptID, $ScriptNAME);
+           IPS_SetParent($ScriptID, $ParentID);
+           IPS_SetInfo($ScriptID, "This script was created by: #".$_IPS['SELF']."#");
+           IPS_SetHidden($ScriptID, $SetHidden);
+           IPS_SetScriptContent($ScriptID, $ScriptTEXT);
+           return $ScriptID;
+        }
+        IPS_SetScriptContent($ScriptID, $ScriptTEXT);
+        return $ScriptID;   
+    }
+
     private function CreateVariable($Name, $Type, $Value, $Ident = '', $ParentID = 0, $profile = "") {
         //echo "CreateVariable: ( $Name, $Type, $Value, $Ident, $ParentID ) \n";
         if ('' != $Ident) {
@@ -1856,6 +1873,10 @@ class UniFi extends IPSModule {
                     $this->CreateVariable("Enabled", 0, $wlan->enabled, $ident . "_enabled", $catID);
                     $this->RegisterVariableBoolean($ident . "_enabledSET", "WLAN [".$wlan->name."] - Set Mode:", "~Switch");
                     IPS_SetInfo($this->GetIDForIdent($ident . "_enabledSET"), $ident);
+                    $ScriptTEXT_enable = 'UniFi_SetWLANMode('.$this->InstanceID.', "'.$ident.'_enabledSET", "true");';
+                    $ScriptTEXT_disable = 'UniFi_SetWLANMode('.$this->InstanceID.', "'.$ident.'_enabledSET", "false");';
+                    $this->CreateScriptByName("Enable_".$wlan->name,  GetIDForIdent($ident . "_enabledSET"), $ScriptTEXT_enable,  $SetHidden = TRUE);
+                    $this->CreateScriptByName("Disable_".$wlan->name, GetIDForIdent($ident . "_enabledSET"), $ScriptTEXT_disable, $SetHidden = TRUE);
                     $this->EnableAction($ident . "_enabledSET");
                     $this->CreateVariable("Security", 3, $wlan->security, $ident . "_security", $catID);
                 }

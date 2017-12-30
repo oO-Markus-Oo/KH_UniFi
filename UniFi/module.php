@@ -1854,7 +1854,7 @@ class UniFi extends IPSModule {
                     $catID = $this->CreateCategoryByIdent($instance_WLAN_ID, $ident, $wlan->name);
                     $this->CreateVariable("ID", 3, $wlan->_id, $ident . "_id", $catID);
                     $this->CreateVariable("Enabled", 0, $wlan->enabled, $ident . "_enabled", $catID);
-                    $this->CreateVariable("Enabled: SET", 0, "", $ident . "_enabledSET", $catID);
+                    $this->RegisterVariableBoolean($ident . "_enabledSET", "Enabled: SET (".$wlan->name.")", "");
                     $this->CreateVariable("Security", 3, $wlan->security, $ident . "_security", $catID);
                 }
             } 
@@ -1873,7 +1873,6 @@ class UniFi extends IPSModule {
                     $this->CreateVariable("ID", 3, $lan->_id, $ident . "_id", $catID);
                     $this->CreateVariable("Enabled", 0, $lan->enabled, $ident . "_enabled", $catID);
                     if (isset($lan->vlan)) $this->CreateVariable("VLAN", 1, intval($lan->vlan), $ident . "_vlan", $catID);
-                    if (isset($lan->vlan_enabled))$this->CreateVariable("VLAN_Enabled", 0, $lan->vlan_enabled, $ident . "_vlan_enabled", $catID);
                 }
             } 
         }

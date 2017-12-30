@@ -1854,7 +1854,7 @@ class UniFi extends IPSModule {
                     $catID = $this->CreateCategoryByIdent($instance_WLAN_ID, $ident, $wlan->name);
                     $this->CreateVariable("ID", 3, $wlan->_id, $ident . "_id", $catID);
                     $this->CreateVariable("Enabled", 0, $wlan->enabled, $ident . "_enabled", $catID);
-                    $this->RegisterVariableBoolean($ident . "_enabledSET", $wlan->name." - Mode:", "");
+                    $this->RegisterVariableBoolean($ident . "_enabledSET", $wlan->name." - Mode:", "~Switch");
                     IPS_SetInfo($this->GetIDForIdent($ident . "_enabledSET"), $ident);
                     $this->EnableAction($ident . "_enabledSET");
                     $this->CreateVariable("Security", 3, $wlan->security, $ident . "_security", $catID);

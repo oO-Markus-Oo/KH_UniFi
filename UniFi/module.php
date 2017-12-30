@@ -1897,7 +1897,7 @@ class UniFi extends IPSModule {
         }
     }    
 
-    public function RequestAction($Ident, $Value)
+    public function SetWLANMode($Ident, $Value)
     {
         $this->baseURL = $this->ReadPropertyString("IPAddress");
         $this->user = $this->ReadPropertyString("UserName");
@@ -1920,6 +1920,11 @@ class UniFi extends IPSModule {
         {
             throw new Exception("Invalid Network-ID: ".$ChangeNetworkID);
         }
+    }
+    
+    public function RequestAction($Ident, $Value)
+    {
+        $this->SetWLANMode($Ident, $Value);
     }    
 
     public function ApplyChanges() {

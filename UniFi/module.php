@@ -1899,6 +1899,15 @@ class UniFi extends IPSModule {
 
     public function RequestAction($Ident, $Value)
     {
+        $this->baseURL = $this->ReadPropertyString("IPAddress");
+        $this->user = $this->ReadPropertyString("UserName");
+        $this->password = $this->ReadPropertyString("UserPassword");
+        $this->site = $this->ReadPropertyString("Site");
+        $this->version = '5.4.16';
+        $this->checkIntervalNetwork = $this->ReadPropertyInteger("Intervall_Network");
+        $this->checkIntervalClient = $this->ReadPropertyInteger("Intervall_Client");
+        $this->debug = $this->ReadPropertyBoolean("Debug");
+        $this->Login();
         $ChangeNetworkIdent = $this->GetIDForIdent($Ident);
         $ChangeNetworkID    = IPS_GetObject($ChangeNetworkIdent)["ObjectInfo"];
         $ChangeNetwork = $this->disable_wlan($ChangeNetworkID, !$Value);

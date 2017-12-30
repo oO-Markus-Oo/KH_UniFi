@@ -1902,6 +1902,7 @@ class UniFi extends IPSModule {
         $ChangeNetworkIdent = $this->GetIDForIdent($Ident);
         $ChangeNetworkID    = IPS_GetObject($ChangeNetworkIdent)["ObjectInfo"];
         $this->disable_wlan($ChangeNetworkID, true);
+        SetValue($this->GetIDForIdent($Ident), $Value);
     }    
 
     public function ApplyChanges() {

@@ -2044,8 +2044,6 @@ class UniFi extends IPSModule {
     {
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, $this->curl_ssl_verify_peer);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, $this->curl_ssl_verify_host);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $this->connect_timeout);
         if ($this->debug) curl_setopt($ch, CURLOPT_VERBOSE, true);

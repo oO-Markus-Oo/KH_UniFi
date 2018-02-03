@@ -1962,7 +1962,8 @@ class UniFi extends IPSModule {
     
     public function RequestAction($Ident, $Value)
     {
-        $this->SetWLANMode($Ident, $Value);
+        throw new Exception("Network-ID: ".$ChangeNetworkID);
+        $this->SetWLANMode($Ident, boolval($Value));
     }    
 
     public function ApplyChanges() {

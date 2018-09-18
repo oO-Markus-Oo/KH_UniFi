@@ -1908,6 +1908,8 @@ class UniFi extends IPSModule {
 
             if (is_object($this->last_results_raw)) {
                 foreach ($this->last_results_raw->data as $lan) {
+                    $this->SendDebug("LAN", "Name: ".$lan->name);
+                    $this->SendDebug("LAN", "Enabled".isset($lan->enabled));
                     $ident = $lan->_id;
                     $catID = $this->CreateCategoryByIdent($instance_LAN_ID, $ident, $lan->name);
                     $this->CreateVariable("ID", 3, $lan->_id, $ident . "_id", $catID);

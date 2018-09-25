@@ -1933,6 +1933,7 @@ class UniFi extends IPSModule {
                     $this->CreateVariable("Uptime", 1, $aps->uptime, $ident . "_uptime", $catID, "~UnixTimestampTime");
                     if (isset($aps->ip)) $this->CreateVariable("IP", 3, $aps->ip, $ident . "_ip", $catID);     
                     if (isset($aps->hostname)) $this->CreateVariable("Hostname", 3, $aps->hostname, $ident . "_hostname", $catID); 
+                    if (isset($aps->upgradable)) $this->CreateVariable("Firmwareupdate available", 0, $aps->upgradable, $ident . "_upgradable", $catID); 
                 }
             } 
         }

@@ -1785,18 +1785,22 @@ class UniFi extends IPSModule {
                     $ident = str_replace("-", "", $ident);
                     $this->ClientArrayOnline[] = $ident;
                     $catID = $this->CreateCategoryByIdent($instance_Clients_ID, $ident . "_name", $client->name);
-                    $this->CreateVariable("MAC", 3, $client->mac, $ident . "_mac", $catID);
-                    $this->CreateVariable("IP", 3, $client->ip, $ident . "_ip", $catID);
-                    $this->CreateVariable("Hostname", 3, $client->hostname, $ident . "_hostname", $catID);
-                    $this->CreateVariable("Signal", 1, $client->signal, $ident . "_signal", $catID);
-                    $this->CreateVariable("Radio", 3, $client->radio, $ident . "_radio", $catID);
+                    if (isset($client->mac)) $this->CreateVariable("MAC", 3, $client->mac, $ident . "_mac", $catID);
+                    if (isset($client->ap_mac)) $this->CreateVariable("Accesspoint MAC", 3, $client->ap_mac, $ident . "_ap_mac", $catID);
+                    if (isset($client->ip)) $this->CreateVariable("IP", 3, $client->ip, $ident . "_ip", $catID);
+                    if (isset($client->hostname)) $this->CreateVariable("Hostname", 3, $client->hostname, $ident . "_hostname", $catID);
+                    if (isset($client->signal)) $this->CreateVariable("Signal", 1, $client->signal, $ident . "_signal", $catID);
+                    if (isset($client->radio)) $this->CreateVariable("Radio", 3, $client->radio, $ident . "_radio", $catID);
                     //Downloadrate berechnen
-                    $txrate=$this->CalculateRate("TX Bytes", $client->tx_bytes, $ident . "_txbytes", $catID);
+                    if (isset($client->tx_bytes)) $txrate=$this->CalculateRate("TX Bytes", $client->tx_bytes, $ident . "_txbytes", $catID);
                     //Erste danach die aktuellen Werte eintragen
-                    $this->CreateVariable("TX Bytes", 1, $client->tx_bytes, $ident . "_txbytes", $catID);
-                    $this->CreateVariable("RX Bytes", 1, $client->rx_bytes, $ident . "_rxbytes", $catID);
-                    $this->CreateVariable("Uptime", 1, $client->uptime, $ident . "_uptime", $catID, "~UnixTimestampTime");
-                    $this->CreateVariable("Downloadrate", 1, $txrate, $ident . "_txrate", $catID);
+                    if (isset($client->tx_bytes)) $this->CreateVariable("TX Bytes", 1, $client->tx_bytes, $ident . "_txbytes", $catID);
+                    if (isset($client->rx_bytes)) $this->CreateVariable("RX Bytes", 1, $client->rx_bytes, $ident . "_rxbytes", $catID);
+                    if (isset($client->uptime)) $this->CreateVariable("Uptime", 1, $client->uptime, $ident . "_uptime", $catID, "~UnixTimestampTime");
+                    if (isset($client->last_seen)) $this->CreateVariable("Last Seen", 1, $client->last_seen, $ident . "_last_seen", $catID, "~UnixTimestamp");
+                    if (isset($client->first_seen)) $this->CreateVariable("First Seen", 1, $client->first_seen, $ident . "_first_seen", $catID, "~UnixTimestamp");
+                    if (isset($client->uptime)) $this->CreateVariable("Uptime", 1, $client->uptime, $ident . "_uptime", $catID, "~UnixTimestampTime");
+                    if (isset($txrate)) $this->CreateVariable("Downloadrate", 1, $txrate, $ident . "_txrate", $catID);
                 }
             }
         }       
@@ -1914,7 +1918,7 @@ class UniFi extends IPSModule {
                     $catID = $this->CreateCategoryByIdent($instance_LAN_ID, $ident, $lan->name);
                     $this->CreateVariable("ID", 3, $lan->_id, $ident . "_id", $catID);
                     if (isset($lan->enabled)) $this->CreateVariable("Enabled", 0, $lan->enabled, $ident . "_enabled", $catID);
-                    if (isset($lan->vlan)) $this->CreateVariable("VLAN", 1, intval($lan->vlan), $ident . "_vlan", $catID);
+                    if (isset($lan->vlan))    $this->CreateVariable("VLAN",    1, intval($lan->vlan), $ident . "_vlan", $catID);
                 }
             } 
         }

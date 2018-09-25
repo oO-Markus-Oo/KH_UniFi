@@ -1920,10 +1920,10 @@ class UniFi extends IPSModule {
         }
     }  
 
-    private function GetWLAN_APs($instance_APS_ID) {
+    private function GetUnifi_Devices($instance_APS_ID) {
         if ($this->is_loggedin == true)
         {
-            $apList = $this->list_aps();
+            $apList = $this->list_devices();
 
             if (is_object($this->last_results_raw)) {
                 foreach ($this->last_results_raw->data as $aps) {
@@ -1931,7 +1931,7 @@ class UniFi extends IPSModule {
                     $catID = $this->CreateCategoryByIdent($instance_APS_ID, $ident, $aps->name);
                     $this->CreateVariable("ID", 3, $aps->_id, $ident . "_id", $catID);
                     $this->CreateVariable("Uptime", 1, $aps->uptime, $ident . "_uptime", $catID, "~UnixTimestampTime");
-                    
+                    if (isset($aps->ip)) $this->CreateVariable("IP", 3, $aps->ip, $ident . "_ip", $catID);     
                 }
             } 
         }
@@ -2015,7 +2015,7 @@ class UniFi extends IPSModule {
 
         $this->GetWLANnetworks($instance_WLAN_ID);
         $this->GetLANnetworks($instance_LAN_ID);
-        $this->GetWLAN_APs($instance_APS_ID);
+        $this->GetUnifi_Devices($instance_APS_ID);
         $this->Logout();
     }
 

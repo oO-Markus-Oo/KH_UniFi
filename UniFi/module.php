@@ -1808,6 +1808,18 @@ class UniFi extends IPSModule {
 					{
 						$this->ClientArrayOnline[] = $ident;
 					}
+                    if (isset($client->_last_seen_by_usw))
+					{
+						$this->CreateVariable("Last Seen by USG", 1, $client->_last_seen_by_usw, $ident . "_last_seen_usw", $catID, "~UnixTimestamp");
+						$var_now = time();
+						$var_timedifference = ($var_now - $client->_last_seen_by_usw)/60; //vergangene Minuten seit letztem Kontakt
+						if ($var_timedifference <= 30)
+							$this->ClientArrayOnline[] = $ident;
+					}
+					else
+					{
+						$this->ClientArrayOnline[] = $ident;
+					}					
                     if (isset($client->first_seen)) $this->CreateVariable("First Seen", 1, $client->first_seen, $ident . "_first_seen", $catID, "~UnixTimestamp");
                     if (isset($client->uptime)) $this->CreateVariable("Uptime", 1, $client->uptime, $ident . "_uptime", $catID, "~UnixTimestampTime");
                     if (isset($txrate)) $this->CreateVariable("Downloadrate", 1, $txrate, $ident . "_txrate", $catID);
@@ -1872,7 +1884,19 @@ class UniFi extends IPSModule {
 						else
 						{
 							$this->ClientArrayOnline[] = $ident;
-						}						
+						}	
+						if (isset($client->_last_seen_by_usw))
+						{
+							$this->CreateVariable("Last Seen by USG", 1, $client->_last_seen_by_usw, $ident . "_last_seen_usw", $catID, "~UnixTimestamp");
+							$var_now = time();
+							$var_timedifference = ($var_now - $client->_last_seen_by_usw)/60; //vergangene Minuten seit letztem Kontakt
+							if ($var_timedifference <= 30)
+								$this->ClientArrayOnline[] = $ident;
+						}
+						else
+						{
+							$this->ClientArrayOnline[] = $ident;
+						}							
                     }
                 }
             }       

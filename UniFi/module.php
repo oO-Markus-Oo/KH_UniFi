@@ -1852,7 +1852,6 @@ class UniFi extends IPSModule {
                         }  
                         $ident = str_replace(":", "", $client->mac);
                         $ident = str_replace("-", "", $ident);
-                        $this->ClientArrayOnline[] = $ident;
                         $catID = $this->CreateCategoryByIdent($instance_Clients_ID, $ident . "_name", $client->name);
                         $this->CreateVariable("MAC", 3, $client->mac, $ident . "_mac", $catID);
                         $this->CreateVariable("IP", 3, $client->ip, $ident . "_ip", $catID);
@@ -1862,6 +1861,18 @@ class UniFi extends IPSModule {
                         $this->CreateVariable("TX Bytes", 1, $client->tx_bytes, $ident . "_txbytes", $catID);
                         $this->CreateVariable("RX Bytes", 1, $client->rx_bytes, $ident . "_rxbytes", $catID);
                         $this->CreateVariable("Uptime", 1, $client->uptime, $ident . "_uptime", $catID, "~UnixTimestampTime");
+						if (isset($client->last_seen))
+						{
+							$this->CreateVariable("Last Seen", 1, $client->last_seen, $ident . "_last_seen", $catID, "~UnixTimestamp");
+							$var_now = time();
+							$var_timedifference = ($var_now - $client->last_seen)/60; //vergangene Minuten seit letztem Kontakt
+							if ($var_timedifference <= 30)
+								$this->ClientArrayOnline[] = $ident;
+						}
+						else
+						{
+							$this->ClientArrayOnline[] = $ident;
+						}						
                     }
                 }
             }       

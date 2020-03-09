@@ -1757,7 +1757,7 @@ class UniFi extends IPSModule {
         $this->SetVariable($VarID, $Type, $Value);
     }
 
-    private function GetWLANclients($instance_Clients_ID, $instance_Clients_Presence_ID) {
+    private function GetWLANclients($instance_Clients_ID, $instance_Clients_Presence_ID, $instance_Clients_PresenceWLAN_ID) {
         $clientList = $this->list_clients();
 
         if (is_object($this->last_results_raw)) {
@@ -1797,29 +1797,37 @@ class UniFi extends IPSModule {
                     if (isset($client->rx_bytes)) $this->CreateVariable("RX Bytes", 1, $client->rx_bytes, $ident . "_rxbytes", $catID);
                     if (isset($client->uptime)) $this->CreateVariable("Uptime", 1, $client->uptime, $ident . "_uptime", $catID, "~UnixTimestampTime");
                     if (isset($client->last_seen))
-					{
-						$this->CreateVariable("Last Seen", 1, $client->last_seen, $ident . "_last_seen", $catID, "~UnixTimestamp");
-						$var_now = time();
-						$var_timedifference = ($var_now - $client->last_seen)/60; //vergangene Minuten seit letztem Kontakt
-						if ($var_timedifference <= 30)
-							$this->ClientArrayOnline[] = $ident;
-					}
-					else
-					{
-						$this->ClientArrayOnline[] = $ident;
-					}
+                    {
+                        $this->CreateVariable("Last Seen", 1, $client->last_seen, $ident . "_last_seen", $catID, "~UnixTimestamp");
+                        $var_now = time();
+                        $var_timedifference = ($var_now - $client->last_seen)/60; //vergangene Minuten seit letztem Kontakt
+                        if ($var_timedifference <= 30)
+                        {
+                            $this->ClientArrayOnline[] = $ident;
+                            $this->ClientArrayOnlineWLAN[] = $ident;
+                        }
+                    }
+                    else
+                    {
+                        $this->ClientArrayOnline[] = $ident;
+                        $this->ClientArrayOnlineWLAN[] = $ident;
+                    }
                     if (isset($client->_last_seen_by_usw))
-					{
-						$this->CreateVariable("Last Seen by USG", 1, $client->_last_seen_by_usw, $ident . "_last_seen_usw", $catID, "~UnixTimestamp");
-						$var_now = time();
-						$var_timedifference = ($var_now - $client->_last_seen_by_usw)/60; //vergangene Minuten seit letztem Kontakt
-						if ($var_timedifference <= 30)
-							$this->ClientArrayOnline[] = $ident;
-					}
-					else
-					{
-						$this->ClientArrayOnline[] = $ident;
-					}					
+                    {
+                        $this->CreateVariable("Last Seen by USG", 1, $client->_last_seen_by_usw, $ident . "_last_seen_usw", $catID, "~UnixTimestamp");
+                        $var_now = time();
+                        $var_timedifference = ($var_now - $client->_last_seen_by_usw)/60; //vergangene Minuten seit letztem Kontakt
+                        if ($var_timedifference <= 30)
+                        {
+                            $this->ClientArrayOnline[] = $ident;
+                            $this->ClientArrayOnlineWLAN[] = $ident;
+                        }
+                    }
+                    else
+                    {
+                        $this->ClientArrayOnline[] = $ident;
+                        $this->ClientArrayOnlineWLAN[] = $ident;
+                    }                   
                     if (isset($client->first_seen)) $this->CreateVariable("First Seen", 1, $client->first_seen, $ident . "_first_seen", $catID, "~UnixTimestamp");
                     if (isset($client->uptime)) $this->CreateVariable("Uptime", 1, $client->uptime, $ident . "_uptime", $catID, "~UnixTimestampTime");
                     if (isset($txrate)) $this->CreateVariable("Downloadrate", 1, $txrate, $ident . "_txrate", $catID);
@@ -1828,7 +1836,7 @@ class UniFi extends IPSModule {
         }       
     }
 
-    private function GetLANclients($instance_Clients_ID, $instance_Clients_Presence_ID) {
+    private function GetLANclients($instance_Clients_ID, $instance_Clients_Presence_ID, $instance_Clients_PresenceLAN_ID) {
         if ($this->is_loggedin == true)
         {        
             $clientList = $this->list_clients();
@@ -1858,7 +1866,7 @@ class UniFi extends IPSModule {
                         {
                             $client->{'wired-tx_bytes'} = 0;
                         }  
-						if(!isset($client->{'wired-rx_bytes'}))
+                        if(!isset($client->{'wired-rx_bytes'}))
                         {
                             $client->{'wired-rx_bytes'} = 0;
                         }  
@@ -1868,42 +1876,50 @@ class UniFi extends IPSModule {
                         $this->CreateVariable("MAC", 3, $client->mac, $ident . "_mac", $catID);
                         $this->CreateVariable("IP", 3, $client->ip, $ident . "_ip", $catID);
                         $this->CreateVariable("Hostname", 3, $client->hostname, $ident . "_hostname", $catID);
-						if (!isset($client->tx_bytes) AND isset($client->{'wired-tx_bytes'})) $client->tx_bytes = $client->{'wired-tx_bytes'}; 
-						if (!isset($client->rx_bytes) AND isset($client->{'wired-rx_bytes'})) $client->rx_bytes = $client->{'wired-rx_bytes'};					
+                        if (!isset($client->tx_bytes) AND isset($client->{'wired-tx_bytes'})) $client->tx_bytes = $client->{'wired-tx_bytes'}; 
+                        if (!isset($client->rx_bytes) AND isset($client->{'wired-rx_bytes'})) $client->rx_bytes = $client->{'wired-rx_bytes'};                  
                         $this->CreateVariable("TX Bytes", 1, $client->tx_bytes, $ident . "_txbytes", $catID);
                         $this->CreateVariable("RX Bytes", 1, $client->rx_bytes, $ident . "_rxbytes", $catID);
                         $this->CreateVariable("Uptime", 1, $client->uptime, $ident . "_uptime", $catID, "~UnixTimestampTime");
-						if (isset($client->last_seen))
-						{
-							$this->CreateVariable("Last Seen", 1, $client->last_seen, $ident . "_last_seen", $catID, "~UnixTimestamp");
-							$var_now = time();
-							$var_timedifference = ($var_now - $client->last_seen)/60; //vergangene Minuten seit letztem Kontakt
-							if ($var_timedifference <= 30)
-								$this->ClientArrayOnline[] = $ident;
-						}
-						else
-						{
-							$this->ClientArrayOnline[] = $ident;
-						}	
-						if (isset($client->_last_seen_by_usw))
-						{
-							$this->CreateVariable("Last Seen by USG", 1, $client->_last_seen_by_usw, $ident . "_last_seen_usw", $catID, "~UnixTimestamp");
-							$var_now = time();
-							$var_timedifference = ($var_now - $client->_last_seen_by_usw)/60; //vergangene Minuten seit letztem Kontakt
-							if ($var_timedifference <= 30)
-								$this->ClientArrayOnline[] = $ident;
-						}
-						else
-						{
-							$this->ClientArrayOnline[] = $ident;
-						}							
+                        if (isset($client->last_seen))
+                        {
+                            $this->CreateVariable("Last Seen", 1, $client->last_seen, $ident . "_last_seen", $catID, "~UnixTimestamp");
+                            $var_now = time();
+                            $var_timedifference = ($var_now - $client->last_seen)/60; //vergangene Minuten seit letztem Kontakt
+                            if ($var_timedifference <= 30)
+                            {
+                                $this->ClientArrayOnline[] = $ident;
+                                $this->ClientArrayOnlineLAN[] = $ident;
+                            }
+                        }
+                        else
+                        {
+                            $this->ClientArrayOnline[] = $ident;
+                            $this->ClientArrayOnlineLAN[] = $ident;
+                        }   
+                        if (isset($client->_last_seen_by_usw))
+                        {
+                            $this->CreateVariable("Last Seen by USG", 1, $client->_last_seen_by_usw, $ident . "_last_seen_usw", $catID, "~UnixTimestamp");
+                            $var_now = time();
+                            $var_timedifference = ($var_now - $client->_last_seen_by_usw)/60; //vergangene Minuten seit letztem Kontakt
+                            if ($var_timedifference <= 30)
+                            {
+                                $this->ClientArrayOnline[] = $ident;
+                                $this->ClientArrayOnlineLAN[] = $ident;
+                            }
+                        }
+                        else
+                        {
+                            $this->ClientArrayOnline[] = $ident;
+                            $this->ClientArrayOnlineLAN[] = $ident;
+                        }                           
                     }
                 }
             }       
         }  
 }
 
-    private function CheckPresence($instance_Clients_Presence_ID) {
+    private function CheckPresence($instance_Clients_Presence_ID, $instance_Clients_PresenceLAN_ID, $instance_Clients_PresenceWLAN_ID) {
         if ($this->is_loggedin == true)
         {
             if (count($this->ClientArray) != 0)
@@ -1920,12 +1936,30 @@ class UniFi extends IPSModule {
                         else
                             $varOnlineID = $this->CreateVariable($obj->varDeviceName, 0, FALSE, $varClientMAC . "_presence", $instance_Clients_Presence_ID, "~Presence");
                     }
+                    if (property_exists($this, 'ClientArrayOnlineLAN'))
+                    {
+                        if (in_array($varClientMAC, $this->ClientArrayOnlineLAN, TRUE))
+                        {
+                            $varOnlineID = $this->CreateVariable($obj->varDeviceName, 0, TRUE, $varClientMAC . "_presenceLAN", $instance_Clients_PresenceLAN_ID, "~Presence");
+                        }
+                        else
+                            $varOnlineID = $this->CreateVariable($obj->varDeviceName, 0, FALSE, $varClientMAC . "_presenceLAN", $instance_Clients_PresenceLAN_ID, "~Presence");
+                    }	
+                    if (property_exists($this, 'ClientArrayOnlineWLAN'))
+                    {
+                        if (in_array($varClientMAC, $this->ClientArrayOnlineWLAN, TRUE))
+                        {
+                            $varOnlineID = $this->CreateVariable($obj->varDeviceName, 0, TRUE, $varClientMAC . "_presenceWLAN", $instance_Clients_PresenceWLAN_ID, "~Presence");
+                        }
+                        else
+                            $varOnlineID = $this->CreateVariable($obj->varDeviceName, 0, FALSE, $varClientMAC . "_presenceWLAN", $instance_Clients_PresenceWLAN_ID, "~Presence");
+                    }					
                 }
             }
         }
     }
 
-	private function GetWLANnetworks($instance_WLAN_ID) {
+    private function GetWLANnetworks($instance_WLAN_ID) {
         if ($this->is_loggedin == true)
         {
             $wlanList = $this->list_wlanconf();
@@ -1944,21 +1978,21 @@ $wlanId = GetValue(IPS_GetVariableIDByName("ID", IPS_GetCategoryIDByName($wlanNa
 
 if($value)
 {
-	// on
-	UniFi_SetWLANMode('.$this->InstanceID.', $wlanId."_enabledSET", TRUE); 
+    // on
+    UniFi_SetWLANMode('.$this->InstanceID.', $wlanId."_enabledSET", TRUE); 
 }
 else
 {
-	// off
-	UniFi_SetWLANMode('.$this->InstanceID.', $wlanId."_enabledSET", FALSE);
+    // off
+    UniFi_SetWLANMode('.$this->InstanceID.', $wlanId."_enabledSET", FALSE);
 }
 
-?>';		
+?>';        
             $actionId = IPS_CreateScript(0);
-			IPS_SetParent($actionId, $instance_WLAN_ID);
-			IPS_SetName($actionId, "switchWlanMode");
-			IPS_SetScriptContent($actionId, $ScriptTEXT);
-			IPS_SetHidden($actionId, true);
+            IPS_SetParent($actionId, $instance_WLAN_ID);
+            IPS_SetName($actionId, "switchWlanMode");
+            IPS_SetScriptContent($actionId, $ScriptTEXT);
+            IPS_SetHidden($actionId, true);
 
             if (is_object($this->last_results_raw)) {
                 foreach ($this->last_results_raw->data as $wlan) {
@@ -2112,11 +2146,13 @@ else
         $instance_Clients_ID = $this->CreateCategoryByIdent($instance_id_parent, "Clients", "Clients");
         $instance_Clients_Wireless_ID = $this->CreateCategoryByIdent($instance_Clients_ID, "Wireless", "Wireless");
         $instance_Clients_LAN_ID = $this->CreateCategoryByIdent($instance_Clients_ID, "LAN", "LAN");
-        $instance_Clients_Presence_ID = $this->CreateCategoryByIdent($instance_Clients_ID, "Presence", "_Presence");
+        $instance_Clients_Presence_ID     = $this->CreateCategoryByIdent($instance_Clients_ID, "Presence", "_Presence");
+        $instance_Clients_PresenceLAN_ID  = $this->CreateCategoryByIdent($instance_Clients_ID, "Presence: LAN", "_PresenceLAN");
+        $instance_Clients_PresenceWLAN_ID = $this->CreateCategoryByIdent($instance_Clients_ID, "Presence: WLAN", "_PresenceWLAN");
 
-        $this->GetWLANclients($instance_Clients_Wireless_ID, $instance_Clients_Presence_ID);
-        $this->GetLANclients($instance_Clients_LAN_ID, $instance_Clients_Presence_ID);
-        $this->CheckPresence($instance_Clients_Presence_ID);
+        $this->GetWLANclients($instance_Clients_Wireless_ID, $instance_Clients_Presence_ID, $instance_Clients_PresenceWLAN_ID);
+        $this->GetLANclients($instance_Clients_LAN_ID, $instance_Clients_Presence_ID, $instance_Clients_PresenceLAN_ID);
+        $this->CheckPresence($instance_Clients_Presence_ID, $instance_Clients_PresenceLAN_ID, $instance_Clients_PresenceWLAN_ID);
         $this->Logout();
     }
 

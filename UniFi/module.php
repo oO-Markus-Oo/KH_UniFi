@@ -1987,12 +1987,8 @@ else
     UniFi_SetWLANMode('.$this->InstanceID.', $wlanId."_enabledSET", FALSE);
 }
 
-?>';        
-            $actionId = IPS_CreateScript(0);
-            IPS_SetParent($actionId, $instance_WLAN_ID);
-            IPS_SetName($actionId, "switchWlanMode");
-            IPS_SetScriptContent($actionId, $ScriptTEXT);
-            IPS_SetHidden($actionId, true);
+?>';	
+	    $actionId = $this->CreateScriptByName("switchWlanMode", $instance_WLAN_ID, $ScriptTEXT, $SetHidden = TRUE);
 
             if (is_object($this->last_results_raw)) {
                 foreach ($this->last_results_raw->data as $wlan) {

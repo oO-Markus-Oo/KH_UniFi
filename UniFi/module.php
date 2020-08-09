@@ -1671,7 +1671,7 @@ class UniFi extends IPSModule {
             $VarID = @IPS_GetObjectIDByIdent($Ident, $ParentID);
             if (false !== $VarID) {
                 $this->SendDebug("getVariableValue", "VarID ist: " . $VarID, 0);
-                $v = IPS_GetVariableCompatibility($VarID);
+                $v = IPS_GetVariable($VarID);
                 $this->SendDebug("getVariableValue", "letztes Update: " .date("d.m.y H:i", $v['VariableUpdated']),0);
                 $this->SendDebug("getVariableValue", "letzter Wert: " . $v['VariableValue'],0);
                 $this->SendDebug("getVariableValue", "aktueller Wert: " . $AktValue,0);
@@ -1736,7 +1736,7 @@ class UniFi extends IPSModule {
         if (false !== $VarID) { // exists?
             $Obj = IPS_GetObject($VarID);
             if (2 == $Obj['ObjectType']) { // is variable?
-                $Var = IPS_GetVariableCompatibility($VarID);
+                $Var = IPS_GetVariable($VarID);
                 if ($Type == $Var['VariableValue']['ValueType']) {
                     IPS_SetVariableCustomProfile($VarID, $profile);
                     $this->SetVariable($VarID, $Type, $Value);
